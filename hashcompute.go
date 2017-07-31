@@ -13,8 +13,7 @@ import (
 	"github.com/nfnt/resize"
 )
 
-// Average Hash computation.
-// Return 64bits hash.
+// AverageHash fuction returns a hash computation of average hash.
 // Implementation follows
 // http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
 func AverageHash(img image.Image) (*ImageHash, error) {
@@ -38,7 +37,7 @@ func AverageHash(img image.Image) (*ImageHash, error) {
 	return ahash, nil
 }
 
-// Difference Hash computation.
+// DifferenceHash function returns a hash computation of difference hash.
 // Implementation follows
 // http://www.hackerfactor.com/blog/?/archives/529-Kind-of-Like-That.html
 func DifferenceHash(img image.Image) (*ImageHash, error) {
@@ -62,7 +61,7 @@ func DifferenceHash(img image.Image) (*ImageHash, error) {
 	return dhash, nil
 }
 
-// Perceptual Hash computation.
+// PerceptionHash function returns a hash computation of phash.
 // Implementation follows
 // http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
 func PerceptionHash(img image.Image) (*ImageHash, error) {

@@ -8,7 +8,7 @@ import (
 	"image"
 )
 
-// Convert RGB to a gray scale flatten array.
+// Rgb2Gray function converts RGB to a gray scale array.
 func Rgb2Gray(colorImg image.Image) [][]float64 {
 	bounds := colorImg.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
@@ -27,6 +27,7 @@ func Rgb2Gray(colorImg image.Image) [][]float64 {
 	return pixels
 }
 
+// FlattenPixels function flattens 2d array into 1d array.
 func FlattenPixels(pixels [][]float64, x int, y int) []float64 {
 	flattens := make([]float64, x*y)
 	for i := 0; i < y; i++ {

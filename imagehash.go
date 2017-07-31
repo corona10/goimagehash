@@ -11,25 +11,26 @@ import (
 // hashKind describes the kinds of hash.
 type hashKind int
 
+// ImageHash is a struct of hash computation.
 type ImageHash struct {
 	hash uint64
 	kind hashKind
 }
 
 const (
-	Unknown hashKind = iota
-	AHash            // Average Hash
-	PHash            // Perceptual Hash
-	DHash            // Difference Hash
-	WHash            // Wavlet Hash
+	Unknown hashKind = iota // Unknown Hash
+	AHash                   // Average Hash
+	PHash                   // Perceptual Hash
+	DHash                   // Difference Hash
+	WHash                   // Wavlet Hash
 )
 
-// Create a new image hash.
+// NewImageHash function creates a new image hash.
 func NewImageHash(hash uint64, kind hashKind) *ImageHash {
 	return &ImageHash{hash: hash, kind: kind}
 }
 
-// Return distance between hashes.
+// Distance method returns a distance between two hashes.
 func (h *ImageHash) Distance(other *ImageHash) (int, error) {
 	if h.GetKind() != other.GetKind() {
 		return -1, errors.New("Image hashes's kind should be identical.")
@@ -48,17 +49,17 @@ func (h *ImageHash) Distance(other *ImageHash) (int, error) {
 	return diff, nil
 }
 
-// Return hash values.
+// GetHash method returns a 64bits hash value.
 func (h *ImageHash) GetHash() uint64 {
 	return h.hash
 }
 
-// Get kind of a hash.
+// GetKind method returns a kind of image hash.
 func (h *ImageHash) GetKind() hashKind {
 	return h.kind
 }
 
-// Set index of bits.
+// Set method sets a bit of index.
 func (h *ImageHash) Set(idx int) {
 	h.hash |= 1 << uint(idx)
 }

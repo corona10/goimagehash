@@ -4,7 +4,7 @@
 
 package etcs
 
-// Calculate mean of pixels.
+// MeanOfPixels function returns a mean of pixels.
 func MeanOfPixels(pixels []float64) float64 {
 	m := 0.0
 	lens := len(pixels)
@@ -19,8 +19,8 @@ func MeanOfPixels(pixels []float64) float64 {
 	return m / float64(lens)
 }
 
-// Get a median value of pixels.
-// Use quick selection algorithm.
+// MedianOfPixels function returns a median value of pixels.
+// It uses quick selection algorithm.
 func MedianOfPixels(pixels []float64) float64 {
 	tmp := make([]float64, len(pixels))
 	copy(tmp, pixels)

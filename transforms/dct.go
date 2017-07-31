@@ -8,7 +8,7 @@ import (
 	"math"
 )
 
-// Get result of DCT-II.
+// DCT1D function returns result of DCT-II.
 // Follows Matlab dct().
 // Implementation reference:
 // https://unix4lyfe.org/dct-1d/
@@ -30,7 +30,7 @@ func DCT1D(input []float64) []float64 {
 	return out
 }
 
-// Get result of DCT2D by using the seperable property.
+// DCT2D function returns a  result of DCT2D by using the seperable property.
 func DCT2D(input [][]float64, w int, h int) [][]float64 {
 	output := make([][]float64, h)
 	for i := range output {
