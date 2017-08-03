@@ -18,11 +18,16 @@ type ImageHash struct {
 }
 
 const (
-	Unknown hashKind = iota // Unknown Hash
-	AHash                   // Average Hash
-	PHash                   // Perceptual Hash
-	DHash                   // Difference Hash
-	WHash                   // Wavelet Hash
+	// Unknown Hash
+	Unknown hashKind = iota
+	// Average Hash
+	AHash
+	//Perceptual Hash
+	PHash
+	// Difference Hash
+	DHash
+	// Wavelet Hash
+	WHash
 )
 
 // NewImageHash function creates a new image hash.
