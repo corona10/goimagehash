@@ -22,7 +22,7 @@ const (
 	AHash                   // Average Hash
 	PHash                   // Perceptual Hash
 	DHash                   // Difference Hash
-	WHash                   // Wavlet Hash
+	WHash                   // Wavelet Hash
 )
 
 // NewImageHash function creates a new image hash.
