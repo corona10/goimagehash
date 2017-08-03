@@ -18,11 +18,16 @@ type ImageHash struct {
 }
 
 const (
-	Unknown hashKind = iota // Unknown Hash
-	AHash                   // Average Hash
-	PHash                   // Perceptual Hash
-	DHash                   // Difference Hash
-	WHash                   // Wavelet Hash
+	// Unknown is a enum value of the unknown hash.
+	Unknown hashKind = iota
+	// AHash is a enum value of the average hash.
+	AHash
+	//PHash is a enum value of the perceptual hash.
+	PHash
+	// DHash is a enum value of the difference hash.
+	DHash
+	// WHash is a enum value of the wavelet hash.
+	WHash
 )
 
 // NewImageHash function creates a new image hash.
