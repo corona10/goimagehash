@@ -70,13 +70,13 @@ func (h *ImageHash) Set(idx int) {
 	h.hash |= 1 << uint(idx)
 }
 
-const strFmt = "%v:%0x"
+const strFmt = "%1s:%016x"
 
-// FromString returns an image hash from a hex representation
-func FromString(s string) (*ImageHash, error) {
+// ImageHashFromString returns an image hash from a hex representation
+func ImageHashFromString(s string) (*ImageHash, error) {
 	var kindStr string
 	var hash uint64
-	_, err := fmt.Sscanf(s, strFmt, kindStr, hash)
+	_, err := fmt.Sscanf(s, strFmt, &kindStr, &hash)
 	if err != nil {
 		return nil, errors.New("Couldn't parse string " + s)
 	}
