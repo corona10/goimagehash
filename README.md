@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/corona10/goimagehash.svg?branch=master)](https://travis-ci.org/corona10/goimagehash)
 [![GoDoc](https://godoc.org/github.com/corona10/goimagehash?status.svg)](https://godoc.org/github.com/corona10/goimagehash)
 [![Go Report Card](https://goreportcard.com/badge/github.com/corona10/goimagehash)](https://goreportcard.com/report/github.com/corona10/goimagehash)
+[![Coverage Status](https://coveralls.io/repos/github/corona10/goimagehash/badge.svg)](https://coveralls.io/github/corona10/goimagehash)
 
 # goimagehash
 > Inspired by [imagehash](https://github.com/JohannesBuchner/imagehash)
