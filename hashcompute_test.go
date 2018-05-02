@@ -97,3 +97,21 @@ func TestHashCompute(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkDistanceIdentical(b *testing.B) {
+	h1 := &ImageHash{hash: 0xe48ae53c05e502f7}
+	h2 := &ImageHash{hash: 0xe48ae53c05e502f7}
+
+	for i := 0; i < b.N; i++ {
+		h1.Distance(h2)
+	}
+}
+
+func BenchmarkDistanceDifferent(b *testing.B) {
+	h1 := &ImageHash{hash: 0xe48ae53c05e502f7}
+	h2 := &ImageHash{hash: 0x678be53815e510f7} // 8 bits flipped
+
+	for i := 0; i < b.N; i++ {
+		h1.Distance(h2)
+	}
+}

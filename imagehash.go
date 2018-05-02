@@ -42,17 +42,11 @@ func (h *ImageHash) Distance(other *ImageHash) (int, error) {
 		return -1, errors.New("Image hashes's kind should be identical")
 	}
 
-	diff := 0
 	lhash := h.GetHash()
 	rhash := other.GetHash()
 
 	hamming := lhash ^ rhash
-	for hamming != 0 {
-		diff += int(hamming & 1)
-		hamming >>= 1
-	}
-
-	return diff, nil
+	return popcnt(hamming), nil
 }
 
 // GetHash method returns a 64bits hash value.
