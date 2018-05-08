@@ -30,9 +30,9 @@ func TestMedianPixels(t *testing.T) {
 	}{
 		{[]float64{0, 0, 0, 0}, 0},
 		{[]float64{1}, 1},
-		{[]float64{1, 2, 3, 4}, 2},
+		{[]float64{1, 2, 3, 4}, 2.5},
 		{[]float64{5, 3, 1, 7, 9}, 5},
-		{[]float64{98.3, 33.4, 105.44, 1500.4, 22.5, 66.6}, 98.3},
+		{[]float64{98.3, 33.4, 105.44, 1500.4, 22.5, 66.6}, 82.44999999999999},
 	} {
 		pixels := tt.pixels
 		result := MedianOfPixels(pixels)
