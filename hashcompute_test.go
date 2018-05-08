@@ -41,11 +41,11 @@ func TestHashCompute(t *testing.T) {
 		{"_examples/sample2.jpg", "_examples/sample2.jpg", PerceptionHash, "PerceptionHash", 0},
 		{"_examples/sample3.jpg", "_examples/sample3.jpg", PerceptionHash, "PerceptionHash", 0},
 		{"_examples/sample4.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 0},
-		{"_examples/sample1.jpg", "_examples/sample2.jpg", PerceptionHash, "PerceptionHash", 34},
-		{"_examples/sample1.jpg", "_examples/sample3.jpg", PerceptionHash, "PerceptionHash", 7},
-		{"_examples/sample1.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 31},
-		{"_examples/sample2.jpg", "_examples/sample3.jpg", PerceptionHash, "PerceptionHash", 31},
-		{"_examples/sample2.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 23},
+		{"_examples/sample1.jpg", "_examples/sample2.jpg", PerceptionHash, "PerceptionHash", 32},
+		{"_examples/sample1.jpg", "_examples/sample3.jpg", PerceptionHash, "PerceptionHash", 2},
+		{"_examples/sample1.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 30},
+		{"_examples/sample2.jpg", "_examples/sample3.jpg", PerceptionHash, "PerceptionHash", 34},
+		{"_examples/sample2.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 20},
 	} {
 		file1, err := os.Open(tt.img1)
 		if err != nil {

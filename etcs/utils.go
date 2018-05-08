@@ -24,35 +24,38 @@ func MeanOfPixels(pixels []float64) float64 {
 func MedianOfPixels(pixels []float64) float64 {
 	tmp := make([]float64, len(pixels))
 	copy(tmp, pixels)
-	l := len(tmp) - 1
+	l := len(tmp)
 	pos := l / 2
-	v := quickSelect(tmp, 0, l, pos)
+	v := quickSelectMedian(tmp, 0, l-1, pos)
 	return v
 }
 
-func quickSelect(sequence []float64, low int, hi int, k int) float64 {
-	if hi-low <= 1 {
+func quickSelectMedian(sequence []float64, low int, hi int, k int) float64 {
+	if low == hi {
 		return sequence[k]
 	}
-	j := low
-	sequence[j], sequence[k] = sequence[k], sequence[j]
-	j++
-	for i := j; i < hi; i++ {
-		if sequence[i] < sequence[low] {
-			sequence[j], sequence[i] = sequence[i], sequence[j]
-			j++
+
+	for low < hi {
+		pivot := low/2 + hi/2
+		pivotValue := sequence[pivot]
+		storeIdx := low
+		sequence[pivot], sequence[hi] = sequence[hi], sequence[pivot]
+		for i := low; i < hi; i++ {
+			if sequence[i] < pivotValue {
+				sequence[storeIdx], sequence[i] = sequence[i], sequence[storeIdx]
+				storeIdx++
+			}
+		}
+		sequence[hi], sequence[storeIdx] = sequence[storeIdx], sequence[hi]
+		if k <= storeIdx {
+			hi = storeIdx
+		} else {
+			low = storeIdx + 1
 		}
 	}
-	j--
-	sequence[j], sequence[low] = sequence[low], sequence[j]
 
-	if k < j {
-		return quickSelect(sequence, low, j, k)
+	if len(sequence)%2 == 0 {
+		return sequence[k-1]/2 + sequence[k]/2
 	}
-
-	if k > j {
-		return quickSelect(sequence, j+1, hi, k-j)
-	}
-
-	return sequence[j]
+	return sequence[k]
 }
