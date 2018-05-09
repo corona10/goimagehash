@@ -43,3 +43,16 @@ func main() {
         fmt.Printf("Distance between images: %v\n", distance)
 }
 ```
+
+## Release Note
+
+### v0.2.0
+- Perception Hash is updated.
+- Fix a critical bug of finding median value.
+
+### v0.1.0
+- Support Average hashing
+- Support Difference hashing
+- Support Perception hashing
+- Use bits.OnesCount64 for computing Hamming distance by @dominikh
+- Support hex serialization methods to ImageHash by @brunoro
