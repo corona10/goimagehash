@@ -98,6 +98,32 @@ func TestHashCompute(t *testing.T) {
 	}
 }
 
+func NilHashComputeTest(t *testing.T) {
+	hash, err := AverageHash(nil)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+
+	hash, err = DifferenceHash(nil)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+
+	hash, err = PerceptionHash(nil)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+}
+
 func BenchmarkDistanceIdentical(b *testing.B) {
 	h1 := &ImageHash{hash: 0xe48ae53c05e502f7}
 	h2 := &ImageHash{hash: 0xe48ae53c05e502f7}
