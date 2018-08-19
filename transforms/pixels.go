@@ -11,7 +11,7 @@ import (
 // Rgb2Gray function converts RGB to a gray scale array.
 func Rgb2Gray(colorImg image.Image) [][]float64 {
 	bounds := colorImg.Bounds()
-	w, h := bounds.Max.X, bounds.Max.Y
+	w, h := bounds.Max.X-bounds.Min.X, bounds.Max.Y-bounds.Min.Y
 	pixels := make([][]float64, h)
 
 	for i := range pixels {
