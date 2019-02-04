@@ -5,6 +5,7 @@
 package goimagehash
 
 import (
+	"encoding/hex"
 	"errors"
 	"image"
 
