@@ -141,3 +141,98 @@ func BenchmarkDistanceDifferent(b *testing.B) {
 		h1.Distance(h2)
 	}
 }
+
+func TestExtImageHashCompute(t *testing.T) {
+	for _, tt := range []struct {
+		img1     string
+		img2     string
+		hashSize int
+		name     string
+		distance int
+	}{
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 8, "PerceptionHashExtend", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 8, "PerceptionHashExtend", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 8, "PerceptionHashExtend", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 8, "PerceptionHashExtend", 0},
+		{"_examples/sample1.jpg", "_examples/sample2.jpg", 8, "PerceptionHashExtend", 32},
+		{"_examples/sample1.jpg", "_examples/sample3.jpg", 8, "PerceptionHashExtend", 2},
+		{"_examples/sample1.jpg", "_examples/sample4.jpg", 8, "PerceptionHashExtend", 30},
+		{"_examples/sample2.jpg", "_examples/sample3.jpg", 8, "PerceptionHashExtend", 34},
+		{"_examples/sample2.jpg", "_examples/sample4.jpg", 8, "PerceptionHashExtend", 20},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 16, "PerceptionHashExtend", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 16, "PerceptionHashExtend", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 16, "PerceptionHashExtend", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 16, "PerceptionHashExtend", 0},
+	} {
+		file1, err := os.Open(tt.img1)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+		defer file1.Close()
+
+		file2, err := os.Open(tt.img2)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+		defer file2.Close()
+
+		img1, err := jpeg.Decode(file1)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+
+		img2, err := jpeg.Decode(file2)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+
+		hash1, err := PerceptionHashExtend(img1, tt.hashSize)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+		hash2, err := PerceptionHashExtend(img2, tt.hashSize)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+
+		dis1, err := hash1.Distance(hash2)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+
+		dis2, err := hash2.Distance(hash1)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+
+		if dis1 != dis2 {
+			t.Errorf("Distance should be identical %v vs %v", dis1, dis2)
+		}
+
+		if dis1 != tt.distance {
+			t.Errorf("%s: Distance between %v and %v is expected %v but got %v", tt.name, tt.img1, tt.img2, tt.distance, dis1)
+		}
+
+		if (tt.hashSize == 8) {
+			hash0, err := PerceptionHash(img1)
+			if err != nil {
+				t.Errorf("%s", err)
+			}
+			hex0 := hash0.ToString()
+			hex1 := hash1.ToString()
+			hex1 = "p:"+hex1
+			if hex0 != hex1 {
+				t.Errorf("Hex is expected %v but got %v", hex0, hex1)
+			}
+		}
+	}
+}
+
+func BenchmarkExtImageHashDistanceDifferent(b *testing.B) {
+	h1 := &ExtImageHash{hash: []uint64{0xe48ae53c05e502f7}}
+	h2 := &ExtImageHash{hash: []uint64{0x678be53815e510f7}} // 8 bits flipped
+
+	for i := 0; i < b.N; i++ {
+		h1.Distance(h2)
+	}
+}

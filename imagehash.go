@@ -5,6 +5,8 @@
 package goimagehash
 
 import (
+	"encoding/binary"
+	"encoding/hex"
 	"errors"
 	"fmt"
 )
@@ -15,6 +17,12 @@ type Kind int
 // ImageHash is a struct of hash computation.
 type ImageHash struct {
 	hash uint64
+	kind Kind
+}
+
+// ExtImageHash is a struct of big hash computation.
+type ExtImageHash struct {
+	hash []uint64
 	kind Kind
 }
 
@@ -103,4 +111,87 @@ func (h *ImageHash) ToString() string {
 		kindStr = "w"
 	}
 	return fmt.Sprintf(strFmt, kindStr, h.hash)
+}
+
+// Implement ExtImageHash from here
+func newExtImageHash(hash []uint64, kind Kind) *ExtImageHash {
+	return &ExtImageHash{hash: hash, kind: kind}
+}
+
+// Distance method returns a distance between two big hashes
+func (h *ExtImageHash) Distance(other *ExtImageHash) (int, error) {
+	if h.kind != other.kind {
+		return -1, errors.New("Extended Image hashes's kind should be identical")
+	}
+
+	lHash := h.hash
+	rHash := other.hash
+	if len(lHash) != len(rHash) {
+		return -1, errors.New("Extended Image hashes's size should be identical")
+	}
+
+	var distance int 
+	for idx, lh := range lHash {
+		rh := rHash[idx]
+		hamming := lh ^ rh
+		distance += popcnt(hamming)
+	}	
+	return distance, nil
+}
+
+// ToString returns a hex representation of big hash
+func (h *ExtImageHash) ToString() string {
+	var hexBytes []byte
+	for _, hash := range h.hash {
+		hashBytes := make([]byte, 8)
+		binary.BigEndian.PutUint64(hashBytes, hash)
+		hexBytes = append(hexBytes, hashBytes...)
+	}
+	return hex.EncodeToString(hexBytes)
+}
+
+// GetKind method returns a kind of big hash
+func (h *ExtImageHash) GetKind() string {
+	kindStr := ""
+	switch h.kind {
+	case AHash:
+		kindStr = "a"
+	case PHash:
+		kindStr = "p"
+	case DHash:
+		kindStr = "d"
+	case WHash:
+		kindStr = "w"
+	}
+	return kindStr
+}
+
+// ExtImageHashFromString returns a big hash from a hex representation
+func ExtImageHashFromString(s, kindStr string) (*ExtImageHash, error) {
+	hexBytes, err := hex.DecodeString(s)
+	if err != nil {
+		return nil, err
+	}
+	
+	var hash []uint64
+	lenOfByte := 8
+	for i := 0; i < len(hexBytes)/lenOfByte; i++ {
+		startIndex := i*lenOfByte
+		endIndex := startIndex + lenOfByte
+		hashUint64 := binary.BigEndian.Uint64(hexBytes[startIndex : endIndex])
+		hash = append(hash, hashUint64)
+	}
+
+	kind := Unknown
+	switch kindStr {
+	case "a":
+		kind = AHash
+	case "p":
+		kind = PHash
+	case "d":
+		kind = DHash
+	case "w":
+		kind = WHash
+	}
+	return newExtImageHash(hash, kind), nil
 }

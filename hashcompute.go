@@ -5,7 +5,6 @@
 package goimagehash
 
 import (
-	"encoding/hex"
 	"errors"
 	"image"
 
@@ -85,31 +84,31 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 	return phash, nil
 }
 
-// PerceptionHashExtend function returns a hash computation of phash which the size can be set larger than uint64
-// and instead of returing *ImageHash, I found that more convinent to just return string
-func PerceptionHashExtend(img image.Image, hashSize int) (string, error) {
+// PerceptionHashExtend function returns phash of which the size can be set larger than uint64
+// Some variable name refer to https://github.com/JohannesBuchner/imagehash/blob/master/imagehash/__init__.py
+// Support 64bits phash (hashSize=8) and 256bits phash (hashSize=16)
+func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
 	if img == nil {
-		return "", errors.New("Image object can not be nil.")
+		return nil, errors.New("Image object can not be nil")
 	}
-	highfreqFactor := 4
-	imgSize := hashSize * highfreqFactor
+	highFreqFactor := 8
+	imgSize := hashSize * highFreqFactor
 
 	resized := resize.Resize(uint(imgSize), uint(imgSize), img, resize.Bilinear)
 	pixels := transforms.Rgb2Gray(resized)
 	dct := transforms.DCT2D(pixels, imgSize, imgSize)
 	flattens := transforms.FlattenPixels(dct, hashSize, hashSize)
-	// calculate median
 	median := etcs.MedianOfPixels(flattens)
 
-	lenOfByte := 8
+	lenOfUnit := 64
 	lenOfPhash := hashSize * hashSize
-	phash := make([]byte, lenOfPhash/lenOfByte)
+	phash := make([]uint64, lenOfPhash/lenOfUnit)
 	for idx, p := range flattens {
-		indexOfByteArray := (lenOfPhash - 1 - idx) / lenOfByte
-		indexOfBit := idx % lenOfByte
+		indexOfArray := (lenOfPhash - 1 - idx) / lenOfUnit
+		indexOfBit := idx % lenOfUnit
 		if p > median {
-			phash[indexOfByteArray] |= 1 << uint(indexOfBit)
+			phash[indexOfArray] |= 1 << uint(indexOfBit)
 		}
 	}
-	return hex.EncodeToString(phash), nil
+	return newExtImageHash(phash, PHash), nil
 }

@@ -99,5 +99,27 @@ func TestSerialization(t *testing.T) {
 				t.Errorf("Original and unserialized objects should be identical, got distance=%v; %v of '%v'", distance, methodStr, ex)
 			}
 		}
+
+		// test for ExtIExtImageHash
+		hashSizeList := []int{8, 16}
+		for _, hashSize := range hashSizeList {
+			hash, err := PerceptionHashExtend(img, hashSize)
+			checkErr(err)
+
+			hex := hash.ToString()
+			if len(hex) != hashSize*hashSize/4 {
+				t.Errorf("Got invalid hex string '%v'; %v of '%v'", hex, "PerceptionHashExtend", ex)
+			}
+
+			reHash, err := ExtImageHashFromString(hex, "p")
+			checkErr(err)
+
+			distance, err := hash.Distance(reHash)
+			checkErr(err)
+
+			if distance != 0 {
+				t.Errorf("Original and unserialized objects should be identical, got distance=%v; %v of '%v'", distance, "PerceptionHashExtend", ex)
+			}
+		}
 	}
 }
