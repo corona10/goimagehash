@@ -83,3 +83,32 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 	}
 	return phash, nil
 }
+
+// PerceptionHashExtend function returns phash of which the size can be set larger than uint64
+// Some variable name refer to https://github.com/JohannesBuchner/imagehash/blob/master/imagehash/__init__.py
+// Support 64bits phash (hashSize=8) and 256bits phash (hashSize=16)
+func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
+	if img == nil {
+		return nil, errors.New("Image object can not be nil")
+	}
+	highFreqFactor := 8
+	imgSize := hashSize * highFreqFactor
+
+	resized := resize.Resize(uint(imgSize), uint(imgSize), img, resize.Bilinear)
+	pixels := transforms.Rgb2Gray(resized)
+	dct := transforms.DCT2D(pixels, imgSize, imgSize)
+	flattens := transforms.FlattenPixels(dct, hashSize, hashSize)
+	median := etcs.MedianOfPixels(flattens)
+
+	lenOfUnit := 64
+	lenOfPhash := hashSize * hashSize
+	phash := make([]uint64, lenOfPhash/lenOfUnit)
+	for idx, p := range flattens {
+		indexOfArray := (lenOfPhash - 1 - idx) / lenOfUnit
+		indexOfBit := idx % lenOfUnit
+		if p > median {
+			phash[indexOfArray] |= 1 << uint(indexOfBit)
+		}
+	}
+	return NewExtImageHash(phash, PHash), nil
+}
