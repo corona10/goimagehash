@@ -110,5 +110,5 @@ func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 			phash[indexOfArray] |= 1 << uint(indexOfBit)
 		}
 	}
-	return newExtImageHash(phash, PHash), nil
+	return NewExtImageHash(phash, PHash), nil
 }

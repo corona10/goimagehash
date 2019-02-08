@@ -213,14 +213,13 @@ func TestExtImageHashCompute(t *testing.T) {
 			t.Errorf("%s: Distance between %v and %v is expected %v but got %v", tt.name, tt.img1, tt.img2, tt.distance, dis1)
 		}
 
-		if (tt.hashSize == 8) {
+		if tt.hashSize == 8 {
 			hash0, err := PerceptionHash(img1)
 			if err != nil {
 				t.Errorf("%s", err)
 			}
 			hex0 := hash0.ToString()
 			hex1 := hash1.ToString()
-			hex1 = "p:"+hex1
 			if hex0 != hex1 {
 				t.Errorf("Hex is expected %v but got %v", hex0, hex1)
 			}

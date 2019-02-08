@@ -107,11 +107,12 @@ func TestSerialization(t *testing.T) {
 			checkErr(err)
 
 			hex := hash.ToString()
-			if len(hex) != hashSize*hashSize/4 {
+			// len(kind) == 1, len(":") == 1
+			if len(hex) != hashSize*hashSize/4+2 {
 				t.Errorf("Got invalid hex string '%v'; %v of '%v'", hex, "PerceptionHashExtend", ex)
 			}
 
-			reHash, err := ExtImageHashFromString(hex, "p")
+			reHash, err := ExtImageHashFromString(hex)
 			checkErr(err)
 
 			distance, err := hash.Distance(reHash)
