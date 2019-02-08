@@ -232,6 +232,9 @@ func BenchmarkExtImageHashDistanceDifferent(b *testing.B) {
 	h2 := &ExtImageHash{hash: []uint64{0x678be53815e510f7}} // 8 bits flipped
 
 	for i := 0; i < b.N; i++ {
-		h1.Distance(h2)
+		_, err := h1.Distance(h2)
+		if err != nil {
+			b.Errorf("%s", err)
+		}
 	}
 }
