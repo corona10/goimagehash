@@ -147,22 +147,36 @@ func TestExtImageHashCompute(t *testing.T) {
 		img1     string
 		img2     string
 		hashSize int
+		method   func(img image.Image, hashSize int) (*ExtImageHash, error)
 		name     string
 		distance int
 	}{
-		{"_examples/sample1.jpg", "_examples/sample1.jpg", 8, "PerceptionHashExtend", 0},
-		{"_examples/sample2.jpg", "_examples/sample2.jpg", 8, "PerceptionHashExtend", 0},
-		{"_examples/sample3.jpg", "_examples/sample3.jpg", 8, "PerceptionHashExtend", 0},
-		{"_examples/sample4.jpg", "_examples/sample4.jpg", 8, "PerceptionHashExtend", 0},
-		{"_examples/sample1.jpg", "_examples/sample2.jpg", 8, "PerceptionHashExtend", 32},
-		{"_examples/sample1.jpg", "_examples/sample3.jpg", 8, "PerceptionHashExtend", 2},
-		{"_examples/sample1.jpg", "_examples/sample4.jpg", 8, "PerceptionHashExtend", 30},
-		{"_examples/sample2.jpg", "_examples/sample3.jpg", 8, "PerceptionHashExtend", 34},
-		{"_examples/sample2.jpg", "_examples/sample4.jpg", 8, "PerceptionHashExtend", 20},
-		{"_examples/sample1.jpg", "_examples/sample1.jpg", 16, "PerceptionHashExtend", 0},
-		{"_examples/sample2.jpg", "_examples/sample2.jpg", 16, "PerceptionHashExtend", 0},
-		{"_examples/sample3.jpg", "_examples/sample3.jpg", 16, "PerceptionHashExtend", 0},
-		{"_examples/sample4.jpg", "_examples/sample4.jpg", 16, "PerceptionHashExtend", 0},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 8, AverageHashExtend, "AverageHashExtend", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 8, AverageHashExtend, "AverageHashExtend", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 8, AverageHashExtend, "AverageHashExtend", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 8, AverageHashExtend, "AverageHashExtend", 0},
+		{"_examples/sample1.jpg", "_examples/sample2.jpg", 8, AverageHashExtend, "AverageHashExtend", 42},
+		{"_examples/sample1.jpg", "_examples/sample3.jpg", 8, AverageHashExtend, "AverageHashExtend", 4},
+		{"_examples/sample1.jpg", "_examples/sample4.jpg", 8, AverageHashExtend, "AverageHashExtend", 38},
+		{"_examples/sample2.jpg", "_examples/sample3.jpg", 8, AverageHashExtend, "AverageHashExtend", 40},
+		{"_examples/sample2.jpg", "_examples/sample4.jpg", 8, AverageHashExtend, "AverageHashExtend", 6},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 16, AverageHashExtend, "AverageHashExtend", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 16, AverageHashExtend, "AverageHashExtend", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 16, AverageHashExtend, "AverageHashExtend", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 16, AverageHashExtend, "AverageHashExtend", 0},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 0},
+		{"_examples/sample1.jpg", "_examples/sample2.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 32},
+		{"_examples/sample1.jpg", "_examples/sample3.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 2},
+		{"_examples/sample1.jpg", "_examples/sample4.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 30},
+		{"_examples/sample2.jpg", "_examples/sample3.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 34},
+		{"_examples/sample2.jpg", "_examples/sample4.jpg", 8, PerceptionHashExtend, "PerceptionHashExtend", 20},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 16, PerceptionHashExtend, "PerceptionHashExtend", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 16, PerceptionHashExtend, "PerceptionHashExtend", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 16, PerceptionHashExtend, "PerceptionHashExtend", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 16, PerceptionHashExtend, "PerceptionHashExtend", 0},
 	} {
 		file1, err := os.Open(tt.img1)
 		if err != nil {
@@ -186,11 +200,11 @@ func TestExtImageHashCompute(t *testing.T) {
 			t.Errorf("%s", err)
 		}
 
-		hash1, err := PerceptionHashExtend(img1, tt.hashSize)
+		hash1, err := tt.method(img1, tt.hashSize)
 		if err != nil {
 			t.Errorf("%s", err)
 		}
-		hash2, err := PerceptionHashExtend(img2, tt.hashSize)
+		hash2, err := tt.method(img2, tt.hashSize)
 		if err != nil {
 			t.Errorf("%s", err)
 		}
@@ -211,18 +225,6 @@ func TestExtImageHashCompute(t *testing.T) {
 
 		if dis1 != tt.distance {
 			t.Errorf("%s: Distance between %v and %v is expected %v but got %v", tt.name, tt.img1, tt.img2, tt.distance, dis1)
-		}
-
-		if tt.hashSize == 8 {
-			hash0, err := PerceptionHash(img1)
-			if err != nil {
-				t.Errorf("%s", err)
-			}
-			hex0 := hash0.ToString()
-			hex1 := hash1.ToString()
-			if hex0 != hex1 {
-				t.Errorf("Hex is expected %v but got %v", hex0, hex1)
-			}
 		}
 	}
 }
