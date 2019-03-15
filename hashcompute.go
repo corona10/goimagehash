@@ -91,9 +91,7 @@ func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
-	highFreqFactor := 8
-	imgSize := hashSize * highFreqFactor
-
+	imgSize := hashSize * hashSize
 	resized := resize.Resize(uint(imgSize), uint(imgSize), img, resize.Bilinear)
 	pixels := transforms.Rgb2Gray(resized)
 	dct := transforms.DCT2D(pixels, imgSize, imgSize)
@@ -101,14 +99,39 @@ func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 	median := etcs.MedianOfPixels(flattens)
 
 	lenOfUnit := 64
-	lenOfPhash := hashSize * hashSize
-	phash := make([]uint64, lenOfPhash/lenOfUnit)
+	phash := make([]uint64, imgSize/lenOfUnit)
 	for idx, p := range flattens {
-		indexOfArray := (lenOfPhash - 1 - idx) / lenOfUnit
+		indexOfArray := (imgSize - 1 - idx) / lenOfUnit
 		indexOfBit := idx % lenOfUnit
 		if p > median {
 			phash[indexOfArray] |= 1 << uint(indexOfBit)
 		}
 	}
 	return NewExtImageHash(phash, PHash), nil
+}
+
+// AverageHashExtend function returns ahash of which the size can be set larger than uint64
+// Support 64bits ahash (hashSize=8) and 256bits ahash (hashSize=16)
+func AverageHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
+	if img == nil {
+		return nil, errors.New("Image object can not be nil")
+	}
+
+	imgSize := hashSize * hashSize
+
+	resized := resize.Resize(uint(hashSize), uint(hashSize), img, resize.Bilinear)
+	pixels := transforms.Rgb2Gray(resized)
+	flattens := transforms.FlattenPixels(pixels, hashSize, hashSize)
+	avg := etcs.MeanOfPixels(flattens)
+
+	lenOfUnit := 64
+	ahash := make([]uint64, imgSize/lenOfUnit)
+	for idx, p := range flattens {
+		indexOfArray := (imgSize - 1 - idx) / lenOfUnit
+		indexOfBit := idx % lenOfUnit
+		if p > avg {
+			ahash[indexOfArray] |= 1 << uint(indexOfBit)
+		}
+	}
+	return NewExtImageHash(ahash, AHash), nil
 }
