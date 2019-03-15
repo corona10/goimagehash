@@ -12,8 +12,6 @@ A image hashing library written in Go. ImageHash supports:
 * [Perception hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html)
 * [Wavelet hashing](https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5) [TODO]
 
-**Only support 64bits hash.**
-
 ## Installation
 ```
 go get github.com/corona10/goimagehash
