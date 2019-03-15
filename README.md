@@ -46,6 +46,11 @@ func main() {
 
 ## Release Note
 
+### v0.3.0
+- Support DifferenceHashExtend.
+- Support AverageHashExtend.
+- Support PerceptionHashExtend by @TokyoWolFrog.
+
 ### v0.2.0
 - Perception Hash is updated.
 - Fix a critical bug of finding median value.
