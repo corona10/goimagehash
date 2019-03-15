@@ -177,6 +177,19 @@ func TestExtImageHashCompute(t *testing.T) {
 		{"_examples/sample2.jpg", "_examples/sample2.jpg", 16, PerceptionHashExtend, "PerceptionHashExtend", 0},
 		{"_examples/sample3.jpg", "_examples/sample3.jpg", 16, PerceptionHashExtend, "PerceptionHashExtend", 0},
 		{"_examples/sample4.jpg", "_examples/sample4.jpg", 16, PerceptionHashExtend, "PerceptionHashExtend", 0},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 0},
+		{"_examples/sample1.jpg", "_examples/sample2.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 43},
+		{"_examples/sample1.jpg", "_examples/sample3.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 0},
+		{"_examples/sample1.jpg", "_examples/sample4.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 37},
+		{"_examples/sample2.jpg", "_examples/sample3.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 43},
+		{"_examples/sample2.jpg", "_examples/sample4.jpg", 8, DifferenceHashExtend, "DifferenceHashExtend", 16},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 16, DifferenceHashExtend, "DifferenceHashExtend", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 16, DifferenceHashExtend, "DifferenceHashExtend", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 16, DifferenceHashExtend, "DifferenceHashExtend", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 16, DifferenceHashExtend, "DifferenceHashExtend", 0},
 	} {
 		file1, err := os.Open(tt.img1)
 		if err != nil {
