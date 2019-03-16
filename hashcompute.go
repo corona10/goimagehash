@@ -91,6 +91,7 @@ func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
+	var phash []uint64
 	imgSize := hashSize * hashSize
 	resized := resize.Resize(uint(imgSize), uint(imgSize), img, resize.Bilinear)
 	pixels := transforms.Rgb2Gray(resized)
@@ -99,7 +100,11 @@ func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 	median := etcs.MedianOfPixels(flattens)
 
 	lenOfUnit := 64
-	phash := make([]uint64, imgSize/lenOfUnit)
+	if imgSize%lenOfUnit == 0 {
+		phash = make([]uint64, imgSize/lenOfUnit)
+	} else {
+		phash = make([]uint64, imgSize/lenOfUnit+1)
+	}
 	for idx, p := range flattens {
 		indexOfArray := idx / lenOfUnit
 		indexOfBit := lenOfUnit - idx%lenOfUnit - 1
@@ -116,7 +121,7 @@ func AverageHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
-
+	var ahash []uint64
 	imgSize := hashSize * hashSize
 
 	resized := resize.Resize(uint(hashSize), uint(hashSize), img, resize.Bilinear)
@@ -125,7 +130,11 @@ func AverageHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
 	avg := etcs.MeanOfPixels(flattens)
 
 	lenOfUnit := 64
-	ahash := make([]uint64, imgSize/lenOfUnit)
+	if imgSize%lenOfUnit == 0 {
+		ahash = make([]uint64, imgSize/lenOfUnit)
+	} else {
+		ahash = make([]uint64, imgSize/lenOfUnit+1)
+	}
 	for idx, p := range flattens {
 		indexOfArray := idx / lenOfUnit
 		indexOfBit := lenOfUnit - idx%lenOfUnit - 1
@@ -143,13 +152,18 @@ func DifferenceHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 		return nil, errors.New("Image object can not be nil")
 	}
 
+	var dhash []uint64
 	imgSize := hashSize * hashSize
 
 	resized := resize.Resize(uint(hashSize)+1, uint(hashSize), img, resize.Bilinear)
 	pixels := transforms.Rgb2Gray(resized)
 
 	lenOfUnit := 64
-	dhash := make([]uint64, imgSize/lenOfUnit)
+	if imgSize%lenOfUnit == 0 {
+		dhash = make([]uint64, imgSize/lenOfUnit)
+	} else {
+		dhash = make([]uint64, imgSize/lenOfUnit+1)
+	}
 	idx := 0
 	for i := 0; i < len(pixels); i++ {
 		for j := 0; j < len(pixels[i])-1; j++ {
