@@ -34,13 +34,13 @@ func TestNewImageHash(t *testing.T) {
 
 		for i := 0; i < len(data1); i++ {
 			if data1[i] == 1 {
-				hash1.Set(i)
+				hash1.leftShiftSet(i)
 			}
 		}
 
 		for i := 0; i < len(data2); i++ {
 			if data2[i] == 1 {
-				hash2.Set(i)
+				hash2.leftShiftSet(i)
 			}
 		}
 

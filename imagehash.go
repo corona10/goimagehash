@@ -67,8 +67,7 @@ func (h *ImageHash) GetKind() Kind {
 	return h.kind
 }
 
-// Set method sets a bit of index.
-func (h *ImageHash) Set(idx int) {
+func (h *ImageHash) leftShiftSet(idx int) {
 	h.hash |= 1 << uint(idx)
 }
 

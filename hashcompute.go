@@ -30,7 +30,7 @@ func AverageHash(img image.Image) (*ImageHash, error) {
 
 	for idx, p := range flattens {
 		if p > avg {
-			ahash.Set(idx)
+			ahash.leftShiftSet(len(flattens) - idx - 1)
 		}
 	}
 
@@ -52,7 +52,7 @@ func DifferenceHash(img image.Image) (*ImageHash, error) {
 	for i := 0; i < len(pixels); i++ {
 		for j := 0; j < len(pixels[i])-1; j++ {
 			if pixels[i][j] < pixels[i][j+1] {
-				dhash.Set(idx)
+				dhash.leftShiftSet(64 - idx - 1)
 			}
 			idx++
 		}
@@ -78,7 +78,7 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 
 	for idx, p := range flattens {
 		if p > median {
-			phash.Set(idx)
+			phash.leftShiftSet(len(flattens) - idx - 1)
 		}
 	}
 	return phash, nil
@@ -101,8 +101,8 @@ func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 	lenOfUnit := 64
 	phash := make([]uint64, imgSize/lenOfUnit)
 	for idx, p := range flattens {
-		indexOfArray := (imgSize - 1 - idx) / lenOfUnit
-		indexOfBit := idx % lenOfUnit
+		indexOfArray := idx / lenOfUnit
+		indexOfBit := lenOfUnit - idx%lenOfUnit - 1
 		if p > median {
 			phash[indexOfArray] |= 1 << uint(indexOfBit)
 		}
@@ -127,8 +127,8 @@ func AverageHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
 	lenOfUnit := 64
 	ahash := make([]uint64, imgSize/lenOfUnit)
 	for idx, p := range flattens {
-		indexOfArray := (imgSize - 1 - idx) / lenOfUnit
-		indexOfBit := idx % lenOfUnit
+		indexOfArray := idx / lenOfUnit
+		indexOfBit := lenOfUnit - idx%lenOfUnit - 1
 		if p > avg {
 			ahash[indexOfArray] |= 1 << uint(indexOfBit)
 		}
@@ -153,8 +153,8 @@ func DifferenceHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 	idx := 0
 	for i := 0; i < len(pixels); i++ {
 		for j := 0; j < len(pixels[i])-1; j++ {
-			indexOfArray := (imgSize - 1 - idx) / lenOfUnit
-			indexOfBit := idx % lenOfUnit
+			indexOfArray := idx / lenOfUnit
+			indexOfBit := lenOfUnit - idx%lenOfUnit - 1
 			if pixels[i][j] < pixels[i][j+1] {
 				dhash[indexOfArray] |= 1 << uint(indexOfBit)
 			}
