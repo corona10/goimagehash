@@ -6,9 +6,11 @@ package goimagehash
 
 import (
 	"encoding/binary"
+	"encoding/gob"
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 )
 
 // Kind describes the kinds of hash.
@@ -73,7 +75,38 @@ func (h *ImageHash) leftShiftSet(idx int) {
 
 const strFmt = "%1s:%016x"
 
+// Dump method writes a binary serialization into w io.Writer.
+func (h *ImageHash) Dump(w io.Writer) error {
+	type D struct {
+		Hash uint64
+		Kind Kind
+	}
+	enc := gob.NewEncoder(w)
+	err := enc.Encode(D{Hash: h.hash, Kind: h.kind})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// LoadImageHash method loads a ExtImageHash from io.Reader.
+func LoadImageHash(b io.Reader) (*ImageHash, error) {
+	type E struct {
+		Hash uint64
+		Kind Kind
+	}
+	var e E
+	dec := gob.NewDecoder(b)
+	err := dec.Decode(&e)
+	if err != nil {
+		return nil, err
+	}
+	return &ImageHash{hash: e.Hash, kind: e.Kind}, nil
+}
+
 // ImageHashFromString returns an image hash from a hex representation
+//
+// Deprecated: Use goimagehash.LoadImageHash instead.
 func ImageHashFromString(s string) (*ImageHash, error) {
 	var kindStr string
 	var hash uint64
@@ -148,9 +181,40 @@ func (h *ExtImageHash) GetKind() Kind {
 	return h.kind
 }
 
+// Dump method writes a binary serialization into w io.Writer.
+func (h *ExtImageHash) Dump(w io.Writer) error {
+	type D struct {
+		Hash []uint64
+		Kind Kind
+	}
+	enc := gob.NewEncoder(w)
+	err := enc.Encode(D{Hash: h.hash, Kind: h.kind})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// LoadImageHashExtend method loads a ExtImageHash from io.Reader.
+func LoadImageHashExtend(b io.Reader) (*ExtImageHash, error) {
+	type E struct {
+		Hash []uint64
+		Kind Kind
+	}
+	var e E
+	dec := gob.NewDecoder(b)
+	err := dec.Decode(&e)
+	if err != nil {
+		return nil, err
+	}
+	return &ExtImageHash{hash: e.Hash, kind: e.Kind}, nil
+}
+
 const extStrFmt = "%1s:%s"
 
 // ExtImageHashFromString returns a big hash from a hex representation
+//
+// Deprecated: Use goimagehash.LoadImageHashExtend instead.
 func ExtImageHashFromString(s string) (*ExtImageHash, error) {
 	var kindStr string
 	var hashStr string

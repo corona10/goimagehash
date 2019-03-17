@@ -45,8 +45,8 @@ func main() {
 ## Release Note
 
 ### v0.4.0(TBA)
-- **IMPORTANT** goimagehash does not have compatible with the before version
-when it comes to the serialization based on string. bit set order is changed.
+- **IMPORTANT** goimagehash v0.0.4 does not have compatible with the before
+version when it comes to the serialization.
 
 ### v0.3.0
 - Support DifferenceHashExtend.
