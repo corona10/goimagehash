@@ -112,7 +112,7 @@ func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 			phash[indexOfArray] |= 1 << uint(indexOfBit)
 		}
 	}
-	return NewExtImageHash(phash, PHash), nil
+	return NewExtImageHash(phash, PHash, imgSize), nil
 }
 
 // AverageHashExtend function returns ahash of which the size can be set larger than uint64
@@ -142,7 +142,7 @@ func AverageHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
 			ahash[indexOfArray] |= 1 << uint(indexOfBit)
 		}
 	}
-	return NewExtImageHash(ahash, AHash), nil
+	return NewExtImageHash(ahash, AHash, imgSize), nil
 }
 
 // DifferenceHashExtend function returns dhash of which the size can be set larger than uint64
@@ -175,5 +175,5 @@ func DifferenceHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 			idx++
 		}
 	}
-	return NewExtImageHash(dhash, DHash), nil
+	return NewExtImageHash(dhash, DHash, imgSize), nil
 }
