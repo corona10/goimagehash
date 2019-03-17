@@ -29,4 +29,6 @@ func main() {
 	hash2, _ = goimagehash.PerceptionHash(img2)
 	distance, _ = hash1.Distance(hash2)
 	fmt.Printf("Distance between images: %v\n", distance)
+	fmt.Println(hash1.Bits())
+	fmt.Println(hash2.Bits())
 }

@@ -26,6 +26,7 @@ type ImageHash struct {
 type ExtImageHash struct {
 	hash []uint64
 	kind Kind
+	bits int
 }
 
 const (
@@ -44,6 +45,11 @@ const (
 // NewImageHash function creates a new image hash.
 func NewImageHash(hash uint64, kind Kind) *ImageHash {
 	return &ImageHash{hash: hash, kind: kind}
+}
+
+// Bits method returns an actual hash bit size
+func (h *ImageHash) Bits() int {
+	return 64
 }
 
 // Distance method returns a distance between two hashes.
@@ -146,8 +152,13 @@ func (h *ImageHash) ToString() string {
 }
 
 // NewExtImageHash function creates a new big hash
-func NewExtImageHash(hash []uint64, kind Kind) *ExtImageHash {
-	return &ExtImageHash{hash: hash, kind: kind}
+func NewExtImageHash(hash []uint64, kind Kind, bits int) *ExtImageHash {
+	return &ExtImageHash{hash: hash, kind: kind, bits: bits}
+}
+
+// Bits method returns an actual hash bit size
+func (h *ExtImageHash) Bits() int {
+	return h.bits
 }
 
 // Distance method returns a distance between two big hashes
@@ -156,13 +167,18 @@ func (h *ExtImageHash) Distance(other *ExtImageHash) (int, error) {
 		return -1, errors.New("Extended Image hashes's kind should be identical")
 	}
 
+	if h.Bits() != other.Bits() {
+		msg := fmt.Sprintf("Extended image hash should has an identical bit size but got %v vs %v", h.Bits(), other.Bits())
+		return -1, errors.New(msg)
+	}
+
 	lHash := h.GetHash()
 	rHash := other.GetHash()
 	if len(lHash) != len(rHash) {
 		return -1, errors.New("Extended Image hashes's size should be identical")
 	}
 
-	var distance int
+	distance := 0
 	for idx, lh := range lHash {
 		rh := rHash[idx]
 		hamming := lh ^ rh
@@ -186,9 +202,10 @@ func (h *ExtImageHash) Dump(w io.Writer) error {
 	type D struct {
 		Hash []uint64
 		Kind Kind
+		Bits int
 	}
 	enc := gob.NewEncoder(w)
-	err := enc.Encode(D{Hash: h.hash, Kind: h.kind})
+	err := enc.Encode(D{Hash: h.hash, Kind: h.kind, Bits: h.bits})
 	if err != nil {
 		return err
 	}
@@ -200,6 +217,7 @@ func LoadImageHashExtend(b io.Reader) (*ExtImageHash, error) {
 	type E struct {
 		Hash []uint64
 		Kind Kind
+		Bits int
 	}
 	var e E
 	dec := gob.NewDecoder(b)
@@ -207,7 +225,7 @@ func LoadImageHashExtend(b io.Reader) (*ExtImageHash, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ExtImageHash{hash: e.Hash, kind: e.Kind}, nil
+	return &ExtImageHash{hash: e.Hash, kind: e.Kind, bits: e.Bits}, nil
 }
 
 const extStrFmt = "%1s:%s"
@@ -248,7 +266,7 @@ func ExtImageHashFromString(s string) (*ExtImageHash, error) {
 	case "w":
 		kind = WHash
 	}
-	return NewExtImageHash(hash, kind), nil
+	return NewExtImageHash(hash, kind, len(hash)*64), nil
 }
 
 // ToString returns a hex representation of big hash

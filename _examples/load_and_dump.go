@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/corona10/goimagehash"
 	"image/jpeg"
 	"os"
+
+	"github.com/corona10/goimagehash"
 )
 
 func main() {
@@ -20,9 +21,9 @@ func main() {
 	img2, _ := jpeg.Decode(file2)
 	hash1, _ := goimagehash.AverageHashExtend(img1, 15)
 	hash2, _ := goimagehash.AverageHashExtend(img2, 15)
+	hash1024, _ := goimagehash.AverageHashExtend(img2, 32)
 	distance, _ := hash1.Distance(hash2)
 	fmt.Printf("Distance between images: %v\n", distance)
-
 	err := hash1.Dump(foo)
 	if err != nil {
 		fmt.Println(err)
@@ -33,6 +34,8 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	distance, err = hash1.Distance(hash1024)
+	fmt.Println(err)
 	distance, _ = hash1.Distance(hash3)
 	fmt.Printf("Distance between hash1 and hash3: %v\n", distance)
 	distance, _ = hash2.Distance(hash3)
@@ -40,4 +43,7 @@ func main() {
 	fmt.Println(hash1.ToString())
 	fmt.Println(hash2.ToString())
 	fmt.Println(hash3.ToString())
+	fmt.Println(hash1.Bits())
+	fmt.Println(hash2.Bits())
+	fmt.Println(hash3.Bits())
 }

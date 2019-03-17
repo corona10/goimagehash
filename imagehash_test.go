@@ -127,6 +127,31 @@ func TestSerialization(t *testing.T) {
 	}
 }
 
+func TestDifferentBitSizeHash(t *testing.T) {
+	checkErr := func(err error) {
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+	file, err := os.Open("_examples/sample1.jpg")
+	checkErr(err)
+	defer file.Close()
+
+	img, _, err := image.Decode(file)
+	checkErr(err)
+
+	hash1, _ := AverageHashExtend(img, 32)
+	hash2, _ := DifferenceHashExtend(img, 32)
+	_, err = hash1.Distance(hash2)
+	if err == nil {
+		t.Errorf("Should got error with different kinds of hashes")
+	}
+	hash3, _ := AverageHashExtend(img, 31)
+	_, err = hash1.Distance(hash3)
+	if err == nil {
+		t.Errorf("Should got error with different bits of hashes")
+	}
+}
 func TestDumpAndLoad(t *testing.T) {
 	checkErr := func(err error) {
 		if err != nil {
@@ -168,6 +193,10 @@ func TestDumpAndLoad(t *testing.T) {
 			if distance != 0 {
 				t.Errorf("Original and unserialized objects should be identical, got distance=%v", distance)
 			}
+
+			if hash.Bits() != 64 || reHash.Bits() != 64 {
+				t.Errorf("Hash bits should be 64 but got, %v, %v", hash.Bits(), reHash.Bits())
+			}
 		}
 
 		// test for ExtIExtImageHash
@@ -194,6 +223,10 @@ func TestDumpAndLoad(t *testing.T) {
 
 				if distance != 0 {
 					t.Errorf("Original and unserialized objects should be identical, got distance=%v", distance)
+				}
+
+				if hash.Bits() != hashSize*hashSize || reHash.Bits() != hashSize*hashSize {
+					t.Errorf("Hash bits should be 64 but got, %v, %v", hash.Bits(), reHash.Bits())
 				}
 			}
 		}
