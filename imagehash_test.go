@@ -5,6 +5,8 @@
 package goimagehash
 
 import (
+	"bufio"
+	"bytes"
 	"errors"
 	"image"
 	_ "image/jpeg"
@@ -120,6 +122,79 @@ func TestSerialization(t *testing.T) {
 
 			if distance != 0 {
 				t.Errorf("Original and unserialized objects should be identical, got distance=%v; %v of '%v'", distance, "PerceptionHashExtend", ex)
+			}
+		}
+	}
+}
+
+func TestDumpAndLoad(t *testing.T) {
+	checkErr := func(err error) {
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+
+	methods := []func(img image.Image) (*ImageHash, error){
+		AverageHash, PerceptionHash, DifferenceHash,
+	}
+	examples := []string{
+		"_examples/sample1.jpg", "_examples/sample2.jpg", "_examples/sample3.jpg", "_examples/sample4.jpg",
+	}
+
+	for _, ex := range examples {
+		file, err := os.Open(ex)
+		checkErr(err)
+
+		defer file.Close()
+
+		img, _, err := image.Decode(file)
+		checkErr(err)
+
+		for _, method := range methods {
+			hash, err := method(img)
+			checkErr(err)
+			var b bytes.Buffer
+			foo := bufio.NewWriter(&b)
+			err = hash.Dump(foo)
+			checkErr(err)
+			foo.Flush()
+			bar := bufio.NewReader(&b)
+			reHash, err := LoadImageHash(bar)
+			checkErr(err)
+
+			distance, err := hash.Distance(reHash)
+			checkErr(err)
+
+			if distance != 0 {
+				t.Errorf("Original and unserialized objects should be identical, got distance=%v", distance)
+			}
+		}
+
+		// test for ExtIExtImageHash
+		extMethods := []func(img image.Image, hashSize int) (*ExtImageHash, error){
+			AverageHashExtend, PerceptionHashExtend, DifferenceHashExtend,
+		}
+
+		hashSizeList := []int{8, 16}
+		for _, hashSize := range hashSizeList {
+			for _, method := range extMethods {
+				hash, err := method(img, hashSize)
+				checkErr(err)
+				var b bytes.Buffer
+				foo := bufio.NewWriter(&b)
+				err = hash.Dump(foo)
+				checkErr(err)
+				foo.Flush()
+				bar := bufio.NewReader(&b)
+				reHash, err := LoadImageHashExtend(bar)
+				checkErr(err)
+
+				distance, err := hash.Distance(reHash)
+				checkErr(err)
+
+				if distance != 0 {
+					t.Errorf("Original and unserialized objects should be identical, got distance=%v", distance)
+				}
 			}
 		}
 	}
