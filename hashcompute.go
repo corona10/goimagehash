@@ -18,7 +18,7 @@ import (
 // http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
 func AverageHash(img image.Image) (*ImageHash, error) {
 	if img == nil {
-		return nil, errors.New("Image object can not be nil.")
+		return nil, errors.New("Image object can not be nil")
 	}
 
 	// Create 64bits hash.
@@ -42,7 +42,7 @@ func AverageHash(img image.Image) (*ImageHash, error) {
 // http://www.hackerfactor.com/blog/?/archives/529-Kind-of-Like-That.html
 func DifferenceHash(img image.Image) (*ImageHash, error) {
 	if img == nil {
-		return nil, errors.New("Image object can not be nil.")
+		return nil, errors.New("Image object can not be nil")
 	}
 
 	dhash := NewImageHash(0, DHash)
@@ -84,10 +84,10 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 	return phash, nil
 }
 
-// PerceptionHashExtend function returns phash of which the size can be set larger than uint64
+// ExtPerceptionHash function returns phash of which the size can be set larger than uint64
 // Some variable name refer to https://github.com/JohannesBuchner/imagehash/blob/master/imagehash/__init__.py
 // Support 64bits phash (width=8, height=8) and 256bits phash (width=16, height=16)
-func PerceptionHashExtend(img image.Image, width, height int) (*ExtImageHash, error) {
+func ExtPerceptionHash(img image.Image, width, height int) (*ExtImageHash, error) {
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
@@ -115,9 +115,9 @@ func PerceptionHashExtend(img image.Image, width, height int) (*ExtImageHash, er
 	return NewExtImageHash(phash, PHash, imgSize), nil
 }
 
-// AverageHashExtend function returns ahash of which the size can be set larger than uint64
+// ExtAverageHash function returns ahash of which the size can be set larger than uint64
 // Support 64bits ahash (width=8, height=8) and 256bits ahash (width=16, height=16)
-func AverageHashExtend(img image.Image, width, height int) (*ExtImageHash, error) {
+func ExtAverageHash(img image.Image, width, height int) (*ExtImageHash, error) {
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
@@ -145,9 +145,9 @@ func AverageHashExtend(img image.Image, width, height int) (*ExtImageHash, error
 	return NewExtImageHash(ahash, AHash, imgSize), nil
 }
 
-// DifferenceHashExtend function returns dhash of which the size can be set larger than uint64
+// ExtDifferenceHash function returns dhash of which the size can be set larger than uint64
 // Support 64bits dhash (width=8, height=8) and 256bits dhash (width=16, height=16)
-func DifferenceHashExtend(img image.Image, width, height int) (*ExtImageHash, error) {
+func ExtDifferenceHash(img image.Image, width, height int) (*ExtImageHash, error) {
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
