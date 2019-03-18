@@ -86,17 +86,17 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 
 // PerceptionHashExtend function returns phash of which the size can be set larger than uint64
 // Some variable name refer to https://github.com/JohannesBuchner/imagehash/blob/master/imagehash/__init__.py
-// Support 64bits phash (hashSize=8) and 256bits phash (hashSize=16)
-func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
+// Support 64bits phash (width=8, height=8) and 256bits phash (width=16, height=16)
+func PerceptionHashExtend(img image.Image, width, height int) (*ExtImageHash, error) {
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
 	var phash []uint64
-	imgSize := hashSize * hashSize
+	imgSize := width * height
 	resized := resize.Resize(uint(imgSize), uint(imgSize), img, resize.Bilinear)
 	pixels := transforms.Rgb2Gray(resized)
 	dct := transforms.DCT2D(pixels, imgSize, imgSize)
-	flattens := transforms.FlattenPixels(dct, hashSize, hashSize)
+	flattens := transforms.FlattenPixels(dct, width, height)
 	median := etcs.MedianOfPixels(flattens)
 
 	lenOfUnit := 64
@@ -116,17 +116,17 @@ func PerceptionHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) 
 }
 
 // AverageHashExtend function returns ahash of which the size can be set larger than uint64
-// Support 64bits ahash (hashSize=8) and 256bits ahash (hashSize=16)
-func AverageHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
+// Support 64bits ahash (width=8, height=8) and 256bits ahash (width=16, height=16)
+func AverageHashExtend(img image.Image, width, height int) (*ExtImageHash, error) {
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
 	var ahash []uint64
-	imgSize := hashSize * hashSize
+	imgSize := width * height
 
-	resized := resize.Resize(uint(hashSize), uint(hashSize), img, resize.Bilinear)
+	resized := resize.Resize(uint(width), uint(height), img, resize.Bilinear)
 	pixels := transforms.Rgb2Gray(resized)
-	flattens := transforms.FlattenPixels(pixels, hashSize, hashSize)
+	flattens := transforms.FlattenPixels(pixels, width, height)
 	avg := etcs.MeanOfPixels(flattens)
 
 	lenOfUnit := 64
@@ -146,16 +146,16 @@ func AverageHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
 }
 
 // DifferenceHashExtend function returns dhash of which the size can be set larger than uint64
-// Support 64bits dhash (hashSize=8) and 256bits dhash (hashSize=16)
-func DifferenceHashExtend(img image.Image, hashSize int) (*ExtImageHash, error) {
+// Support 64bits dhash (width=8, height=8) and 256bits dhash (width=16, height=16)
+func DifferenceHashExtend(img image.Image, width, height int) (*ExtImageHash, error) {
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
 
 	var dhash []uint64
-	imgSize := hashSize * hashSize
+	imgSize := width * height
 
-	resized := resize.Resize(uint(hashSize)+1, uint(hashSize), img, resize.Bilinear)
+	resized := resize.Resize(uint(width)+1, uint(height), img, resize.Bilinear)
 	pixels := transforms.Rgb2Gray(resized)
 
 	lenOfUnit := 64
