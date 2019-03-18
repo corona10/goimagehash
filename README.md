@@ -58,9 +58,15 @@ func main() {
 
 ## Release Note
 
-### v0.4.0(TBA)
-- **IMPORTANT** goimagehash v0.0.4 does not have compatible with the before
-version when it comes to the serialization.
+### v1.0.0
+**IMPORTANT** 
+goimagehash v1.0.0 does not have compatible with the before version for future features
+
+- More flexible extended hash APIs are provided ([ExtAverageHash](https://godoc.org/github.com/corona10/goimagehash#ExtAverageHash), [ExtPerceptionHash](https://godoc.org/github.com/corona10/goimagehash#ExtPerceptionHash), [ExtDifferenceHash](https://godoc.org/github.com/corona10/goimagehash#ExtDifferenceHash))
+- New serialization APIs are provided([ImageHash.Dump](https://godoc.org/github.com/corona10/goimagehash#ImageHash.Dump), [ExtImageHash.Dump](https://godoc.org/github.com/corona10/goimagehash#ExtImageHash.Dump))
+- [ExtImageHashFromString](https://godoc.org/github.com/corona10/goimagehash#ExtImageHashFromString), [ImageHashFromString](https://godoc.org/github.com/corona10/goimagehash#ImageHashFromString) is deprecated and will be removed
+- New deserialization APIs are provided([LoadImageHash](https://godoc.org/github.com/corona10/goimagehash#LoadImageHash), [LoadExtImageHash](https://godoc.org/github.com/corona10/goimagehash#LoadExtImageHash))
+- Bits APIs are provided to measure actual bit size of hash
 
 ### v0.3.0
 - Support DifferenceHashExtend.
