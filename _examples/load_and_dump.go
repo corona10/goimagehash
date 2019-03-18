@@ -20,9 +20,9 @@ func main() {
 	img1, _ := jpeg.Decode(file1)
 	img2, _ := jpeg.Decode(file2)
 	width, height := 15, 15
-	hash1, _ := goimagehash.AverageHashExtend(img1, width, height)
-	hash2, _ := goimagehash.AverageHashExtend(img2, width, height)
-	hash1024, _ := goimagehash.AverageHashExtend(img2, 32, 32)
+	hash1, _ := goimagehash.ExtAverageHash(img1, width, height)
+	hash2, _ := goimagehash.ExtAverageHash(img2, width, height)
+	hash1024, _ := goimagehash.ExtAverageHash(img2, 32, 32)
 	distance, _ := hash1.Distance(hash2)
 	fmt.Printf("Distance between images: %v\n", distance)
 	err := hash1.Dump(foo)

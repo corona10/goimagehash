@@ -105,13 +105,13 @@ func TestSerialization(t *testing.T) {
 		// test for ExtIExtImageHash
 		sizeList := []int{8, 16}
 		for _, size := range sizeList {
-			hash, err := PerceptionHashExtend(img, size, size)
+			hash, err := ExtPerceptionHash(img, size, size)
 			checkErr(err)
 
 			hex := hash.ToString()
 			// len(kind) == 1, len(":") == 1
 			if len(hex) != size*size/4+2 {
-				t.Errorf("Got invalid hex string '%v'; %v of '%v'", hex, "PerceptionHashExtend", ex)
+				t.Errorf("Got invalid hex string '%v'; %v of '%v'", hex, "ExtPerceptionHash", ex)
 			}
 
 			reHash, err := ExtImageHashFromString(hex)
@@ -121,7 +121,7 @@ func TestSerialization(t *testing.T) {
 			checkErr(err)
 
 			if distance != 0 {
-				t.Errorf("Original and unserialized objects should be identical, got distance=%v; %v of '%v'", distance, "PerceptionHashExtend", ex)
+				t.Errorf("Original and unserialized objects should be identical, got distance=%v; %v of '%v'", distance, "ExtPerceptionHash", ex)
 			}
 		}
 	}
@@ -140,13 +140,13 @@ func TestDifferentBitSizeHash(t *testing.T) {
 	img, _, err := image.Decode(file)
 	checkErr(err)
 
-	hash1, _ := AverageHashExtend(img, 32, 32)
-	hash2, _ := DifferenceHashExtend(img, 32, 32)
+	hash1, _ := ExtAverageHash(img, 32, 32)
+	hash2, _ := ExtDifferenceHash(img, 32, 32)
 	_, err = hash1.Distance(hash2)
 	if err == nil {
 		t.Errorf("Should got error with different kinds of hashes")
 	}
-	hash3, _ := AverageHashExtend(img, 31, 31)
+	hash3, _ := ExtAverageHash(img, 31, 31)
 	_, err = hash1.Distance(hash3)
 	if err == nil {
 		t.Errorf("Should got error with different bits of hashes")
@@ -201,7 +201,7 @@ func TestDumpAndLoad(t *testing.T) {
 
 		// test for ExtIExtImageHash
 		extMethods := []func(img image.Image, width, height int) (*ExtImageHash, error){
-			AverageHashExtend, PerceptionHashExtend, DifferenceHashExtend,
+			ExtAverageHash, ExtPerceptionHash, ExtDifferenceHash,
 		}
 
 		sizeList := []int{8, 16}
