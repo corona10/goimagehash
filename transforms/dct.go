@@ -6,6 +6,7 @@ package transforms
 
 import (
 	"math"
+	"sync"
 )
 
 // DCT1D function returns result of DCT-II.
@@ -37,21 +38,32 @@ func DCT2D(input [][]float64, w int, h int) [][]float64 {
 		output[i] = make([]float64, w)
 	}
 
+	wg := new(sync.WaitGroup)
 	for i := 0; i < h; i++ {
-		cols := DCT1D(input[i])
-		copy(output[i], cols)
+		wg.Add(1)
+		go func(i int) {
+			cols := DCT1D(input[i])
+			output[i] = cols
+			wg.Done()
+		}(i)
 	}
 
+	wg.Wait()
 	for i := 0; i < w; i++ {
+		wg.Add(1)
 		in := make([]float64, h)
-		for j := 0; j < h; j++ {
-			in[j] = output[j][i]
-		}
-		rows := DCT1D(in)
-		for j := 0; j < len(rows); j++ {
-			output[j][i] = rows[j]
-		}
+		go func(i int) {
+			for j := 0; j < h; j++ {
+				in[j] = output[j][i]
+			}
+			rows := DCT1D(in)
+			for j := 0; j < len(rows); j++ {
+				output[j][i] = rows[j]
+			}
+			wg.Done()
+		}(i)
 	}
 
+	wg.Wait()
 	return output
 }
