@@ -31,7 +31,7 @@ func main() {
 	}
 	foo.Flush()
 	bar := bufio.NewReader(&b)
-	hash3, err := goimagehash.LoadImageHashExtend(bar)
+	hash3, err := goimagehash.LoadExtImageHash(bar)
 	if err != nil {
 		fmt.Println(err)
 	}

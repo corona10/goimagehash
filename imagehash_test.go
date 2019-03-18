@@ -215,7 +215,7 @@ func TestDumpAndLoad(t *testing.T) {
 				checkErr(err)
 				foo.Flush()
 				bar := bufio.NewReader(&b)
-				reHash, err := LoadImageHashExtend(bar)
+				reHash, err := LoadExtImageHash(bar)
 				checkErr(err)
 
 				distance, err := hash.Distance(reHash)

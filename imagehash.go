@@ -212,8 +212,8 @@ func (h *ExtImageHash) Dump(w io.Writer) error {
 	return nil
 }
 
-// LoadImageHashExtend method loads a ExtImageHash from io.Reader.
-func LoadImageHashExtend(b io.Reader) (*ExtImageHash, error) {
+// LoadExtImageHash method loads a ExtImageHash from io.Reader.
+func LoadExtImageHash(b io.Reader) (*ExtImageHash, error) {
 	type E struct {
 		Hash []uint64
 		Kind Kind
@@ -232,7 +232,7 @@ const extStrFmt = "%1s:%s"
 
 // ExtImageHashFromString returns a big hash from a hex representation
 //
-// Deprecated: Use goimagehash.LoadImageHashExtend instead.
+// Deprecated: Use goimagehash.LoadExtImageHash instead.
 func ExtImageHashFromString(s string) (*ExtImageHash, error) {
 	var kindStr string
 	var hashStr string
