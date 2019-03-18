@@ -103,14 +103,14 @@ func TestSerialization(t *testing.T) {
 		}
 
 		// test for ExtIExtImageHash
-		hashSizeList := []int{8, 16}
-		for _, hashSize := range hashSizeList {
-			hash, err := PerceptionHashExtend(img, hashSize)
+		sizeList := []int{8, 16}
+		for _, size := range sizeList {
+			hash, err := PerceptionHashExtend(img, size, size)
 			checkErr(err)
 
 			hex := hash.ToString()
 			// len(kind) == 1, len(":") == 1
-			if len(hex) != hashSize*hashSize/4+2 {
+			if len(hex) != size*size/4+2 {
 				t.Errorf("Got invalid hex string '%v'; %v of '%v'", hex, "PerceptionHashExtend", ex)
 			}
 
@@ -140,13 +140,13 @@ func TestDifferentBitSizeHash(t *testing.T) {
 	img, _, err := image.Decode(file)
 	checkErr(err)
 
-	hash1, _ := AverageHashExtend(img, 32)
-	hash2, _ := DifferenceHashExtend(img, 32)
+	hash1, _ := AverageHashExtend(img, 32, 32)
+	hash2, _ := DifferenceHashExtend(img, 32, 32)
 	_, err = hash1.Distance(hash2)
 	if err == nil {
 		t.Errorf("Should got error with different kinds of hashes")
 	}
-	hash3, _ := AverageHashExtend(img, 31)
+	hash3, _ := AverageHashExtend(img, 31, 31)
 	_, err = hash1.Distance(hash3)
 	if err == nil {
 		t.Errorf("Should got error with different bits of hashes")
@@ -200,14 +200,14 @@ func TestDumpAndLoad(t *testing.T) {
 		}
 
 		// test for ExtIExtImageHash
-		extMethods := []func(img image.Image, hashSize int) (*ExtImageHash, error){
+		extMethods := []func(img image.Image, width, height int) (*ExtImageHash, error){
 			AverageHashExtend, PerceptionHashExtend, DifferenceHashExtend,
 		}
 
-		hashSizeList := []int{8, 16}
-		for _, hashSize := range hashSizeList {
+		sizeList := []int{8, 16}
+		for _, size := range sizeList {
 			for _, method := range extMethods {
-				hash, err := method(img, hashSize)
+				hash, err := method(img, size, size)
 				checkErr(err)
 				var b bytes.Buffer
 				foo := bufio.NewWriter(&b)
@@ -225,7 +225,7 @@ func TestDumpAndLoad(t *testing.T) {
 					t.Errorf("Original and unserialized objects should be identical, got distance=%v", distance)
 				}
 
-				if hash.Bits() != hashSize*hashSize || reHash.Bits() != hashSize*hashSize {
+				if hash.Bits() != size*size || reHash.Bits() != size*size {
 					t.Errorf("Hash bits should be 64 but got, %v, %v", hash.Bits(), reHash.Bits())
 				}
 			}
