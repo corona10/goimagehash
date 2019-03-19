@@ -58,6 +58,9 @@ func main() {
 
 ## Release Note
 
+### v1.0.1
+- Perception/ExtPerception hash creation times are reduced
+
 ### v1.0.0
 **IMPORTANT** 
 goimagehash v1.0.0 does not have compatible with the before version for future features

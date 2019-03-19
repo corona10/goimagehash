@@ -98,7 +98,7 @@ func TestHashCompute(t *testing.T) {
 	}
 }
 
-func NilHashComputeTest(t *testing.T) {
+func TestNilHashCompute(t *testing.T) {
 	hash, err := AverageHash(nil)
 	if err == nil {
 		t.Errorf("Error should be got.")
@@ -116,6 +116,40 @@ func NilHashComputeTest(t *testing.T) {
 	}
 
 	hash, err = PerceptionHash(nil)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+}
+
+func TestNilExtendHashCompute(t *testing.T) {
+	hash, err := ExtAverageHash(nil, 8, 8)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+
+	hash, err = ExtDifferenceHash(nil, 8, 8)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+
+	hash, err = ExtPerceptionHash(nil, 8, 8)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+
+	hash, err = ExtPerceptionHash(nil, 8, 9)
 	if err == nil {
 		t.Errorf("Error should be got.")
 	}
@@ -290,6 +324,42 @@ func BenchmarkPerceptionHash(b *testing.B) {
 	}
 	for i := 0; i < b.N; i++ {
 		_, err := ExtPerceptionHash(img1, 8, 8)
+		if err != nil {
+			b.Errorf("%s", err)
+		}
+	}
+}
+
+func BenchmarkAverageHash(b *testing.B) {
+	file1, err := os.Open("_examples/sample3.jpg")
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	defer file1.Close()
+	img1, err := jpeg.Decode(file1)
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	for i := 0; i < b.N; i++ {
+		_, err := ExtAverageHash(img1, 8, 8)
+		if err != nil {
+			b.Errorf("%s", err)
+		}
+	}
+}
+
+func BenchmarkDiffrenceHash(b *testing.B) {
+	file1, err := os.Open("_examples/sample3.jpg")
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	defer file1.Close()
+	img1, err := jpeg.Decode(file1)
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	for i := 0; i < b.N; i++ {
+		_, err := ExtDifferenceHash(img1, 8, 8)
 		if err != nil {
 			b.Errorf("%s", err)
 		}
