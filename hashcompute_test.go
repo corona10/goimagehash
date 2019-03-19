@@ -192,10 +192,6 @@ func TestExtImageHashCompute(t *testing.T) {
 		{"_examples/sample1.jpg", "_examples/sample4.jpg", 16, 16, ExtPerceptionHash, "ExtPerceptionHash", 122},
 		{"_examples/sample2.jpg", "_examples/sample3.jpg", 16, 16, ExtPerceptionHash, "ExtPerceptionHash", 118},
 		{"_examples/sample2.jpg", "_examples/sample4.jpg", 16, 16, ExtPerceptionHash, "ExtPerceptionHash", 104},
-		{"_examples/sample1.jpg", "_examples/sample1.jpg", 17, 17, ExtPerceptionHash, "ExtPerceptionHash", 0},
-		{"_examples/sample2.jpg", "_examples/sample2.jpg", 17, 17, ExtPerceptionHash, "ExtPerceptionHash", 0},
-		{"_examples/sample3.jpg", "_examples/sample3.jpg", 17, 17, ExtPerceptionHash, "ExtPerceptionHash", 0},
-		{"_examples/sample4.jpg", "_examples/sample4.jpg", 17, 17, ExtPerceptionHash, "ExtPerceptionHash", 0},
 		{"_examples/sample1.jpg", "_examples/sample1.jpg", 8, 8, ExtDifferenceHash, "ExtDifferenceHash", 0},
 		{"_examples/sample2.jpg", "_examples/sample2.jpg", 8, 8, ExtDifferenceHash, "ExtDifferenceHash", 0},
 		{"_examples/sample3.jpg", "_examples/sample3.jpg", 8, 8, ExtDifferenceHash, "ExtDifferenceHash", 0},
@@ -276,6 +272,24 @@ func BenchmarkExtImageHashDistanceDifferent(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		_, err := h1.Distance(h2)
+		if err != nil {
+			b.Errorf("%s", err)
+		}
+	}
+}
+
+func BenchmarkPerceptionHash(b *testing.B) {
+	file1, err := os.Open("_examples/sample3.jpg")
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	defer file1.Close()
+	img1, err := jpeg.Decode(file1)
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	for i := 0; i < b.N; i++ {
+		_, err := ExtPerceptionHash(img1, 8, 8)
 		if err != nil {
 			b.Errorf("%s", err)
 		}
