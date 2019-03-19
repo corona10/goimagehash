@@ -281,3 +281,21 @@ func BenchmarkExtImageHashDistanceDifferent(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkPerceptionHash(b *testing.B) {
+	file1, err := os.Open("_examples/sample3.jpg")
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	defer file1.Close()
+	img1, err := jpeg.Decode(file1)
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	for i := 0; i < b.N; i++ {
+		_, err := ExtPerceptionHash(img1, 8, 8)
+		if err != nil {
+			b.Errorf("%s", err)
+		}
+	}
+}
