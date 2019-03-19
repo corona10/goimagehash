@@ -10,25 +10,31 @@ import (
 )
 
 // DCT1D function returns result of DCT-II.
-// Follows Matlab dct().
-// Implementation reference:
-// https://unix4lyfe.org/dct-1d/
+// DCT type II, unscaled. Algorithm by Byeong Gi Lee, 1984.
 func DCT1D(input []float64) []float64 {
-	n := len(input)
-	out := make([]float64, n)
-	for i := 0; i < n; i++ {
-		z := 0.0
-		for j := 0; j < n; j++ {
-			z += input[j] * math.Cos(math.Pi*(float64(j)+0.5)*float64(i)/float64(n))
-		}
+	temp := make([]float64, len(input))
+	forwardTransform(input, temp, len(input))
+	return input
+}
 
-		if i == 0 {
-			z *= math.Sqrt(0.5)
-		}
-		out[i] = z * math.Sqrt(2.0/float64(n))
-
+func forwardTransform(input, temp []float64, Len int) {
+	if Len == 1 {
+		return
 	}
-	return out
+
+	halfLen := Len / 2
+	for i := 0; i < halfLen; i++ {
+		x, y := input[i], input[Len-1-i]
+		temp[i] = x + y
+		temp[i+halfLen] = (x - y) / (math.Cos((float64(i)+0.5)*math.Pi/float64(Len)) * 2)
+	}
+	forwardTransform(temp, input, halfLen)
+	forwardTransform(temp[halfLen:], input, halfLen)
+	for i := 0; i < halfLen-1; i++ {
+		input[i*2+0] = temp[i]
+		input[i*2+1] = temp[i+halfLen] + temp[i+halfLen+1]
+	}
+	input[Len-2], input[Len-1] = temp[halfLen-1], temp[Len-1]
 }
 
 // DCT2D function returns a  result of DCT2D by using the seperable property.

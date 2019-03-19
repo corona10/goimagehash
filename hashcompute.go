@@ -87,12 +87,16 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 // ExtPerceptionHash function returns phash of which the size can be set larger than uint64
 // Some variable name refer to https://github.com/JohannesBuchner/imagehash/blob/master/imagehash/__init__.py
 // Support 64bits phash (width=8, height=8) and 256bits phash (width=16, height=16)
+// Important: width * height should be the power of 2
 func ExtPerceptionHash(img image.Image, width, height int) (*ExtImageHash, error) {
+	imgSize := width * height
 	if img == nil {
 		return nil, errors.New("Image object can not be nil")
 	}
+	if imgSize <= 0 || imgSize&(imgSize-1) != 0 {
+		return nil, errors.New("width * height should be power of 2")
+	}
 	var phash []uint64
-	imgSize := width * height
 	resized := resize.Resize(uint(imgSize), uint(imgSize), img, resize.Bilinear)
 	pixels := transforms.Rgb2Gray(resized)
 	dct := transforms.DCT2D(pixels, imgSize, imgSize)
