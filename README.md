@@ -38,7 +38,7 @@ func main() {
         hash1, _ = goimagehash.DifferenceHash(img1)
         hash2, _ = goimagehash.DifferenceHash(img2)
         distance, _ = hash1.Distance(hash2)
-        fmt.Printf("Distance between images: %v\n", distance)ls
+        fmt.Printf("Distance between images: %v\n", distance)
         width, height := 8, 8
         hash3, _ = goimagehash.ExtAverageHash(img1, width, height)
         hash4, _ = goimagehash.ExtAverageHash(img2, width, height)
