@@ -95,7 +95,7 @@ func (h *ImageHash) Dump(w io.Writer) error {
 	return nil
 }
 
-// LoadImageHash method loads a ExtImageHash from io.Reader.
+// LoadImageHash method loads a ImageHash from io.Reader.
 func LoadImageHash(b io.Reader) (*ImageHash, error) {
 	type E struct {
 		Hash uint64
