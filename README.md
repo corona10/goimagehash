@@ -1,3 +1,4 @@
+![GitHub Action](https://github.com/corona10/goimagehash/workflows/goimagehash%20workflow/badge.svg)
 [![GoDoc](https://godoc.org/github.com/corona10/goimagehash?status.svg)](https://godoc.org/github.com/corona10/goimagehash)
 [![Go Report Card](https://goreportcard.com/badge/github.com/corona10/goimagehash)](https://goreportcard.com/report/github.com/corona10/goimagehash)
 
