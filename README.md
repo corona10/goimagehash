@@ -56,12 +56,18 @@ func main() {
 ```
 
 ## Release Note
+### v1.0.3
+- Add workflow for GithubAction
+- Fix typo on the GoDoc for LoadImageHash
+
+### v1.0.2
+- go.mod is now used for install goimagehash
 
 ### v1.0.1
 - Perception/ExtPerception hash creation times are reduced
 
 ### v1.0.0
-**IMPORTANT** 
+**IMPORTANT**
 goimagehash v1.0.0 does not have compatible with the before version for future features
 
 - More flexible extended hash APIs are provided ([ExtAverageHash](https://godoc.org/github.com/corona10/goimagehash#ExtAverageHash), [ExtPerceptionHash](https://godoc.org/github.com/corona10/goimagehash#ExtPerceptionHash), [ExtDifferenceHash](https://godoc.org/github.com/corona10/goimagehash#ExtDifferenceHash))
