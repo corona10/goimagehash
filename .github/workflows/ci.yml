@@ -16,6 +16,8 @@ jobs:
       run: |
         echo "##[set-env name=GOPATH;]$(dirname $GITHUB_WORKSPACE)"
       id: gopath
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
     - name: Checkout code
       uses: actions/checkout@v1
