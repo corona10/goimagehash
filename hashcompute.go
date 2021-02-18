@@ -84,6 +84,29 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 	return phash, nil
 }
 
+// PerceptionHash32 function returns a hash computation of phash.
+// Implementation follows
+// http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+func PerceptionHash32(img image.Image) (*ImageHash, error) {
+	if img == nil {
+		return nil, errors.New("Image object can not be nil")
+	}
+
+	phash := NewImageHash(0, PHash)
+	resized := resize.Resize(32, 32, img, resize.Bilinear)
+	pixels := transforms.Rgb2Gray(resized)
+	dct := transforms.DCT2D(pixels, 32, 32)
+	flattens := transforms.FlattenPixels(dct, 8, 8)
+	median := etcs.MedianOfPixels(flattens)
+
+	for idx, p := range flattens {
+		if p > median {
+			phash.leftShiftSet(len(flattens) - idx - 1)
+		}
+	}
+	return phash, nil
+}
+
 // ExtPerceptionHash function returns phash of which the size can be set larger than uint64
 // Some variable name refer to https://github.com/JohannesBuchner/imagehash/blob/master/imagehash/__init__.py
 // Support 64bits phash (width=8, height=8) and 256bits phash (width=16, height=16)
