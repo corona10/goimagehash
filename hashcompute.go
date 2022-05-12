@@ -7,6 +7,7 @@ package goimagehash
 import (
 	"errors"
 	"image"
+	"sync"
 
 	"github.com/corona10/goimagehash/etcs"
 	"github.com/corona10/goimagehash/transforms"
@@ -81,6 +82,44 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 			phash.leftShiftSet(len(flattens) - idx - 1)
 		}
 	}
+	return phash, nil
+}
+
+var pixelPool64 = sync.Pool{
+	New: func() interface{} {
+		p := make([]float64, 4096)
+		return &p
+	},
+}
+
+// PerceptionHashFast function returns a hash computation of phash.
+// Uses static DCT tables for improved performance.
+// Implementation follows
+// http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+func PerceptionHashFast(img image.Image) (*ImageHash, error) {
+	if img == nil {
+		return nil, errors.New("image object can not be nil")
+	}
+
+	phash := NewImageHash(0, PHash)
+	resized := resize.Resize(64, 64, img, resize.Bilinear)
+
+	pixels := pixelPool64.Get().(*[]float64)
+
+	transforms.Rgb2GrayFast(resized, pixels)
+	transforms.DCT2DFast64(pixels)
+	flattens := transforms.FlattenPixelsFast64(*pixels, 8, 8)
+
+	pixelPool64.Put(pixels)
+
+	median := etcs.MedianOfPixelsFast64(flattens)
+
+	for idx, p := range flattens {
+		if p > median {
+			phash.leftShiftSet(64 - idx - 1) // leftShiftSet
+		}
+	}
+
 	return phash, nil
 }
 
