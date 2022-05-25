@@ -97,25 +97,3 @@ func DCT2DFast64(input *[]float64) {
 		}
 	}
 }
-
-func forwardTransformFast(input, temp []float64, Len int) {
-	if Len == 1 {
-		return
-	}
-
-	halfLen := Len / 2
-	t := dctTables[halfLen>>1]
-	for i := 0; i < halfLen; i++ {
-		x, y := input[i], input[Len-1-i]
-		temp[i] = x + y
-		temp[i+halfLen] = (x - y) / t[i]
-	}
-	forwardTransformFast(temp, input, halfLen)
-	forwardTransformFast(temp[halfLen:], input, halfLen)
-	for i := 0; i < halfLen-1; i++ {
-		input[i*2+0] = temp[i]
-		input[i*2+1] = temp[i+halfLen] + temp[i+halfLen+1]
-	}
-
-	input[Len-2], input[Len-1] = temp[halfLen-1], temp[Len-1]
-}

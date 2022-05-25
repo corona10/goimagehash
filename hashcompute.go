@@ -72,37 +72,6 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 
 	phash := NewImageHash(0, PHash)
 	resized := resize.Resize(64, 64, img, resize.Bilinear)
-	pixels := transforms.Rgb2Gray(resized)
-	dct := transforms.DCT2D(pixels, 64, 64)
-	flattens := transforms.FlattenPixels(dct, 8, 8)
-	median := etcs.MedianOfPixels(flattens)
-
-	for idx, p := range flattens {
-		if p > median {
-			phash.leftShiftSet(len(flattens) - idx - 1)
-		}
-	}
-	return phash, nil
-}
-
-var pixelPool64 = sync.Pool{
-	New: func() interface{} {
-		p := make([]float64, 4096)
-		return &p
-	},
-}
-
-// PerceptionHashFast function returns a hash computation of phash.
-// Uses static DCT tables for improved performance.
-// Implementation follows
-// http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
-func PerceptionHashFast(img image.Image) (*ImageHash, error) {
-	if img == nil {
-		return nil, errors.New("image object can not be nil")
-	}
-
-	phash := NewImageHash(0, PHash)
-	resized := resize.Resize(64, 64, img, resize.Bilinear)
 
 	pixels := pixelPool64.Get().(*[]float64)
 
@@ -121,6 +90,13 @@ func PerceptionHashFast(img image.Image) (*ImageHash, error) {
 	}
 
 	return phash, nil
+}
+
+var pixelPool64 = sync.Pool{
+	New: func() interface{} {
+		p := make([]float64, 4096)
+		return &p
+	},
 }
 
 // ExtPerceptionHash function returns phash of which the size can be set larger than uint64

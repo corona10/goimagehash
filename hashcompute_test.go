@@ -50,15 +50,6 @@ func TestHashCompute(t *testing.T) {
 		{"_examples/sample1.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 30},
 		{"_examples/sample2.jpg", "_examples/sample3.jpg", PerceptionHash, "PerceptionHash", 34},
 		{"_examples/sample2.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 20},
-		{"_examples/sample1.jpg", "_examples/sample1.jpg", PerceptionHashFast, "PerceptionHashFast", 0},
-		{"_examples/sample2.jpg", "_examples/sample2.jpg", PerceptionHashFast, "PerceptionHashFast", 0},
-		{"_examples/sample3.jpg", "_examples/sample3.jpg", PerceptionHashFast, "PerceptionHashFast", 0},
-		{"_examples/sample4.jpg", "_examples/sample4.jpg", PerceptionHashFast, "PerceptionHashFast", 0},
-		{"_examples/sample1.jpg", "_examples/sample2.jpg", PerceptionHashFast, "PerceptionHashFast", 32},
-		{"_examples/sample1.jpg", "_examples/sample3.jpg", PerceptionHashFast, "PerceptionHashFast", 2},
-		{"_examples/sample1.jpg", "_examples/sample4.jpg", PerceptionHashFast, "PerceptionHashFast", 30},
-		{"_examples/sample2.jpg", "_examples/sample3.jpg", PerceptionHashFast, "PerceptionHashFast", 34},
-		{"_examples/sample2.jpg", "_examples/sample4.jpg", PerceptionHashFast, "PerceptionHashFast", 20},
 	} {
 		file1, err := os.Open(tt.img1)
 		if err != nil {
@@ -409,24 +400,6 @@ func BenchmarkPerceptionHash(b *testing.B) {
 	}
 	for i := 0; i < b.N; i++ {
 		_, err := ExtPerceptionHash(img1, 8, 8)
-		if err != nil {
-			b.Errorf("%s", err)
-		}
-	}
-}
-
-func BenchmarkPerceptionHashFast(b *testing.B) {
-	file1, err := os.Open("_examples/sample3.jpg")
-	if err != nil {
-		b.Errorf("%s", err)
-	}
-	defer file1.Close()
-	img1, err := jpeg.Decode(file1)
-	if err != nil {
-		b.Errorf("%s", err)
-	}
-	for i := 0; i < b.N; i++ {
-		_, err := PerceptionHashFast(img1)
 		if err != nil {
 			b.Errorf("%s", err)
 		}

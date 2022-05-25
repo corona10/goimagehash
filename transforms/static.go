@@ -110,28 +110,22 @@ func forwardTransformStatic4(input []float64) {
 	input[3] = t3
 }
 
+func init() {
+	// dct256
+	for i := 0; i < 128; i++ {
+		dct256[i] = (math.Cos((float64(i)+0.5)*math.Pi/256) * 2)
+	}
+	// dct128
+	for i := 0; i < 64; i++ {
+		dct128[i] = (math.Cos((float64(i)+0.5)*math.Pi/128) * 2)
+	}
+}
+
 // Static DCT Tables
 var (
-	dctTables = [][]float64{
-		dct2[:],  //0
-		dct4[:],  //1
-		dct8[:],  //2
-		nil,      //3
-		dct16[:], //4
-		nil,      //5
-		nil,      //6
-		nil,      //7
-		dct32[:], //8
-		nil,      //9
-		nil,      //10
-		nil,      //11
-		nil,      //12
-		nil,      //13
-		nil,      //14
-		nil,      //15
-		dct64[:], //16
-	}
-	dct64 = [32]float64{
+	dct256 = [128]float64{}
+	dct128 = [64]float64{}
+	dct64  = [32]float64{
 		(math.Cos((float64(0)+0.5)*math.Pi/64) * 2),
 		(math.Cos((float64(1)+0.5)*math.Pi/64) * 2),
 		(math.Cos((float64(2)+0.5)*math.Pi/64) * 2),
