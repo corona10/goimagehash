@@ -9,10 +9,6 @@ import (
 	"image/jpeg"
 	"os"
 	"testing"
-
-	"github.com/corona10/goimagehash/etcs"
-	"github.com/corona10/goimagehash/transforms"
-	"github.com/nfnt/resize"
 )
 
 func TestHashCompute(t *testing.T) {
