@@ -19,7 +19,7 @@ import (
 // http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
 func AverageHash(img image.Image) (*ImageHash, error) {
 	if img == nil {
-		return nil, errors.New("Image object can not be nil")
+		return nil, errors.New("image object can not be nil")
 	}
 
 	// Create 64bits hash.
@@ -43,7 +43,7 @@ func AverageHash(img image.Image) (*ImageHash, error) {
 // http://www.hackerfactor.com/blog/?/archives/529-Kind-of-Like-That.html
 func DifferenceHash(img image.Image) (*ImageHash, error) {
 	if img == nil {
-		return nil, errors.New("Image object can not be nil")
+		return nil, errors.New("image object can not be nil")
 	}
 
 	dhash := NewImageHash(0, DHash)
@@ -67,7 +67,7 @@ func DifferenceHash(img image.Image) (*ImageHash, error) {
 // http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
 func PerceptionHash(img image.Image) (*ImageHash, error) {
 	if img == nil {
-		return nil, errors.New("Image object can not be nil")
+		return nil, errors.New("image object can not be nil")
 	}
 
 	phash := NewImageHash(0, PHash)
@@ -76,12 +76,12 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 	pixels := pixelPool64.Get().(*[]float64)
 
 	transforms.Rgb2GrayFast(resized, pixels)
-	transforms.DCT2DFast64(pixels)
-	flattens := transforms.FlattenPixelsFast64(*pixels, 8, 8)
+	flattens := transforms.DCT2DFast64(pixels)
+	//flattens := transforms.FlattenPixelsFast64(*pixels, 8, 8)
 
 	pixelPool64.Put(pixels)
 
-	median := etcs.MedianOfPixelsFast64(flattens)
+	median := etcs.MedianOfPixelsFast64(flattens[:])
 
 	for idx, p := range flattens {
 		if p > median {
@@ -106,7 +106,7 @@ var pixelPool64 = sync.Pool{
 func ExtPerceptionHash(img image.Image, width, height int) (*ExtImageHash, error) {
 	imgSize := width * height
 	if img == nil {
-		return nil, errors.New("Image object can not be nil")
+		return nil, errors.New("image object can not be nil")
 	}
 	if imgSize <= 0 || imgSize&(imgSize-1) != 0 {
 		return nil, errors.New("width * height should be power of 2")
@@ -138,7 +138,7 @@ func ExtPerceptionHash(img image.Image, width, height int) (*ExtImageHash, error
 // Support 64bits ahash (width=8, height=8) and 256bits ahash (width=16, height=16)
 func ExtAverageHash(img image.Image, width, height int) (*ExtImageHash, error) {
 	if img == nil {
-		return nil, errors.New("Image object can not be nil")
+		return nil, errors.New("image object can not be nil")
 	}
 	var ahash []uint64
 	imgSize := width * height
@@ -168,7 +168,7 @@ func ExtAverageHash(img image.Image, width, height int) (*ExtImageHash, error) {
 // Support 64bits dhash (width=8, height=8) and 256bits dhash (width=16, height=16)
 func ExtDifferenceHash(img image.Image, width, height int) (*ExtImageHash, error) {
 	if img == nil {
-		return nil, errors.New("Image object can not be nil")
+		return nil, errors.New("image object can not be nil")
 	}
 
 	var dhash []uint64

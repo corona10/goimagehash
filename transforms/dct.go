@@ -76,24 +76,24 @@ func DCT2D(input [][]float64, w int, h int) [][]float64 {
 
 // DCT2DFast64 function returns a result of DCT2D by using the seperable property.
 // Fast uses static DCT tables for improved performance.
-func DCT2DFast64(input *[]float64) {
+func DCT2DFast64(input *[]float64) (flattens [64]float64) {
 	if len(*input) != 4096 {
 		panic("incorrect input size")
 	}
 
 	for i := 0; i < 64; i++ { // height
-		DCT1DFast64((*input)[i*64 : (i*64)+64])
-		//forwardTransformFast((*input)[i*64:(i*64)+64], temp[:], 64)
+		forwardDCT64((*input)[i*64 : (i*64)+64])
 	}
 
-	for i := 0; i < 64; i++ { // width
-		row := [64]float64{}
+	var row [64]float64
+	for i := 0; i < 8; i++ { // width
 		for j := 0; j < 64; j++ {
-			row[j] = (*input)[i+((j)*64)]
+			row[j] = (*input)[64*j+i]
 		}
-		DCT1DFast64(row[:])
-		for j := 0; j < len(row); j++ {
-			(*input)[i+(j*64)] = row[j]
+		forwardDCT64(row[:])
+		for j := 0; j < 8; j++ {
+			flattens[8*j+i] = row[j]
 		}
 	}
+	return
 }
