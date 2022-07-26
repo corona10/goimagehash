@@ -75,10 +75,10 @@ func DCT2D(input [][]float64, w int, h int) [][]float64 {
 }
 
 // DCT2DFast64 function returns a result of DCT2D by using the seperable property.
-// Fast uses static DCT tables for improved performance.
+// Fast uses static DCT tables for improved performance. Returns flattened pixels.
 func DCT2DFast64(input *[]float64) (flattens [64]float64) {
-	if len(*input) != 4096 {
-		panic("incorrect input size")
+	if len(*input) != 64*64 {
+		panic("incorrect input size, wanted 64x64.")
 	}
 
 	for i := 0; i < 64; i++ { // height
@@ -96,4 +96,28 @@ func DCT2DFast64(input *[]float64) (flattens [64]float64) {
 		}
 	}
 	return
+}
+
+// DCT2DFast256 function returns a result of DCT2D by using the seperable property.
+// DCT type II, unscaled. Algorithm by Byeong Gi Lee, 1984.
+// Fast uses static DCT tables for improved performance. Returns flattened pixels.
+func DCT2DFast256(input *[]float64) (flattens [256]float64) {
+	if len(*input) != 256*256 {
+		panic("incorrect input size, wanted 256x256.")
+	}
+	for i := 0; i < 256; i++ { // height
+		forwardDCT256((*input)[i*256 : 256*i+256])
+	}
+
+	var row [256]float64
+	for i := 0; i < 16; i++ { // width
+		for j := 0; j < 256; j++ {
+			row[j] = (*input)[256*j+i]
+		}
+		forwardDCT256(row[:])
+		for j := 0; j < 16; j++ {
+			flattens[16*j+i] = row[j]
+		}
+	}
+	return flattens
 }
