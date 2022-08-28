@@ -77,7 +77,6 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 
 	transforms.Rgb2GrayFast(resized, pixels)
 	flattens := transforms.DCT2DFast64(pixels)
-	//flattens := transforms.FlattenPixelsFast64(*pixels, 8, 8)
 
 	pixelPool64.Put(pixels)
 
