@@ -27,7 +27,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/nfnt/resize"
+  name = "github.com/disintegration/imaging"
 
 [prune]
   go-tests = true

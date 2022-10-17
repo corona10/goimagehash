@@ -11,7 +11,7 @@ import (
 
 	"github.com/corona10/goimagehash/etcs"
 	"github.com/corona10/goimagehash/transforms"
-	"github.com/nfnt/resize"
+	"github.com/disintegration/imaging"
 )
 
 // AverageHash fuction returns a hash computation of average hash.
@@ -24,7 +24,7 @@ func AverageHash(img image.Image) (*ImageHash, error) {
 
 	// Create 64bits hash.
 	ahash := NewImageHash(0, AHash)
-	resized := resize.Resize(8, 8, img, resize.Bilinear)
+	resized := imaging.Resize(img, 8, 8, imaging.Lanczos)
 	pixels := transforms.Rgb2Gray(resized)
 	flattens := transforms.FlattenPixels(pixels, 8, 8)
 	avg := etcs.MeanOfPixels(flattens)
@@ -47,7 +47,7 @@ func DifferenceHash(img image.Image) (*ImageHash, error) {
 	}
 
 	dhash := NewImageHash(0, DHash)
-	resized := resize.Resize(9, 8, img, resize.Bilinear)
+	resized := imaging.Resize(img, 9, 8, imaging.Lanczos)
 	pixels := transforms.Rgb2Gray(resized)
 	idx := 0
 	for i := 0; i < len(pixels); i++ {
@@ -71,7 +71,7 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 	}
 
 	phash := NewImageHash(0, PHash)
-	resized := resize.Resize(64, 64, img, resize.Bilinear)
+	resized := imaging.Resize(img, 64, 64, imaging.Lanczos)
 
 	pixels := pixelPool64.Get().(*[]float64)
 
@@ -111,7 +111,7 @@ func ExtPerceptionHash(img image.Image, width, height int) (*ExtImageHash, error
 		return nil, errors.New("width * height should be power of 2")
 	}
 	var phash []uint64
-	resized := resize.Resize(uint(imgSize), uint(imgSize), img, resize.Bilinear)
+	resized := imaging.Resize(img, imgSize, imgSize, imaging.Lanczos)
 	pixels := transforms.Rgb2Gray(resized)
 	dct := transforms.DCT2D(pixels, imgSize, imgSize)
 	flattens := transforms.FlattenPixels(dct, width, height)
@@ -142,7 +142,7 @@ func ExtAverageHash(img image.Image, width, height int) (*ExtImageHash, error) {
 	var ahash []uint64
 	imgSize := width * height
 
-	resized := resize.Resize(uint(width), uint(height), img, resize.Bilinear)
+	resized := imaging.Resize(img, width, height, imaging.Lanczos)
 	pixels := transforms.Rgb2Gray(resized)
 	flattens := transforms.FlattenPixels(pixels, width, height)
 	avg := etcs.MeanOfPixels(flattens)
@@ -173,7 +173,7 @@ func ExtDifferenceHash(img image.Image, width, height int) (*ExtImageHash, error
 	var dhash []uint64
 	imgSize := width * height
 
-	resized := resize.Resize(uint(width)+1, uint(height), img, resize.Bilinear)
+	resized := imaging.Resize(img, width+1, height, imaging.Lanczos)
 	pixels := transforms.Rgb2Gray(resized)
 
 	lenOfUnit := 64
