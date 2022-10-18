@@ -1,6 +1,5 @@
 module github.com/corona10/goimagehash
 
-go 1.19
 
 require github.com/disintegration/imaging v1.6.2
 
