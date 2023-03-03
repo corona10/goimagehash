@@ -46,6 +46,16 @@ func TestHashCompute(t *testing.T) {
 		{"_examples/sample1.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 30},
 		{"_examples/sample2.jpg", "_examples/sample3.jpg", PerceptionHash, "PerceptionHash", 34},
 		{"_examples/sample2.jpg", "_examples/sample4.jpg", PerceptionHash, "PerceptionHash", 20},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", WaveletHash, "WaveletHash", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", WaveletHash, "WaveletHash", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", WaveletHash, "WaveletHash", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", WaveletHash, "WaveletHash", 0},
+		{"_examples/sample1.jpg", "_examples/sample2.jpg", WaveletHash, "WaveletHash", 38},
+		{"_examples/sample1.jpg", "_examples/sample3.jpg", WaveletHash, "WaveletHash", 2},
+		{"_examples/sample1.jpg", "_examples/sample4.jpg", WaveletHash, "WaveletHash", 34},
+		{"_examples/sample2.jpg", "_examples/sample3.jpg", WaveletHash, "WaveletHash", 40},
+		{"_examples/sample2.jpg", "_examples/sample4.jpg", WaveletHash, "WaveletHash", 6},
+		{"_examples/sample3.jpg", "_examples/sample4.jpg", WaveletHash, "WaveletHash", 36},
 	} {
 		file1, err := os.Open(tt.img1)
 		if err != nil {
@@ -122,6 +132,15 @@ func TestNilHashCompute(t *testing.T) {
 	if hash != nil {
 		t.Errorf("Nil hash should be got. but got %v", hash)
 	}
+
+	hash, err = WaveletHash(nil)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+
+	}
 }
 
 func TestNilExtendHashCompute(t *testing.T) {
@@ -155,6 +174,45 @@ func TestNilExtendHashCompute(t *testing.T) {
 	}
 	if hash != nil {
 		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+
+	hash, err = ExtWaveletHash(nil, 8, 8)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+}
+
+func TestNotAPowerOf2(t *testing.T) {
+	for _, tt := range []struct {
+		img    string
+		width  int
+		height int
+		method func(img image.Image, width, height int) (*ExtImageHash, error)
+		name   string
+	}{
+		{"_examples/sample1.jpg", 8, 17, ExtPerceptionHash, "ExtPerceptionHash"},
+		{"_examples/sample1.jpg", 8, 17, ExtWaveletHash, "ExtWaveletHash"},
+	} {
+		file, err := os.Open(tt.img)
+		if err != nil {
+
+		}
+		defer file.Close()
+
+		img, err := jpeg.Decode(file)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+		hash, err := tt.method(img, tt.width, tt.height)
+		if err == nil {
+			t.Errorf("Error should be got.")
+		}
+		if hash != nil {
+			t.Errorf("Nil hash should be got. but got %v", hash)
+		}
 	}
 }
 
@@ -248,6 +306,24 @@ func TestExtImageHashCompute(t *testing.T) {
 		{"_examples/sample2.jpg", "_examples/sample2.jpg", 17, 17, ExtDifferenceHash, "ExtDifferenceHash", 0},
 		{"_examples/sample3.jpg", "_examples/sample3.jpg", 17, 17, ExtDifferenceHash, "ExtDifferenceHash", 0},
 		{"_examples/sample4.jpg", "_examples/sample4.jpg", 17, 17, ExtDifferenceHash, "ExtDifferenceHash", 0},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 0},
+		{"_examples/sample1.jpg", "_examples/sample2.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 38},
+		{"_examples/sample1.jpg", "_examples/sample3.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 2},
+		{"_examples/sample1.jpg", "_examples/sample4.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 34},
+		{"_examples/sample2.jpg", "_examples/sample3.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 40},
+		{"_examples/sample2.jpg", "_examples/sample4.jpg", 8, 8, ExtWaveletHash, "ExtWaveletHash", 6},
+		{"_examples/sample1.jpg", "_examples/sample1.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 0},
+		{"_examples/sample2.jpg", "_examples/sample2.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 0},
+		{"_examples/sample3.jpg", "_examples/sample3.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 0},
+		{"_examples/sample4.jpg", "_examples/sample4.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 0},
+		{"_examples/sample1.jpg", "_examples/sample2.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 166},
+		{"_examples/sample1.jpg", "_examples/sample3.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 14},
+		{"_examples/sample1.jpg", "_examples/sample4.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 164},
+		{"_examples/sample2.jpg", "_examples/sample3.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 168},
+		{"_examples/sample2.jpg", "_examples/sample4.jpg", 16, 16, ExtWaveletHash, "ExtWaveletHash", 40},
 	} {
 		file1, err := os.Open(tt.img1)
 		if err != nil {
@@ -360,6 +436,24 @@ func BenchmarkDiffrenceHash(b *testing.B) {
 	}
 	for i := 0; i < b.N; i++ {
 		_, err := ExtDifferenceHash(img1, 8, 8)
+		if err != nil {
+			b.Errorf("%s", err)
+		}
+	}
+}
+
+func BenchmarkWaveletHash(b *testing.B) {
+	file1, err := os.Open("_examples/sample3.jpg")
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	defer file1.Close()
+	img1, err := jpeg.Decode(file1)
+	if err != nil {
+		b.Errorf("%s", err)
+	}
+	for i := 0; i < b.N; i++ {
+		_, err := ExtWaveletHash(img1, 8, 8)
 		if err != nil {
 			b.Errorf("%s", err)
 		}

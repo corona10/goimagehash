@@ -9,7 +9,7 @@ A image hashing library written in Go. ImageHash supports:
 * [Average hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html)
 * [Difference hashing](http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html)
 * [Perception hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html)
-* [Wavelet hashing](https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5) [TODO]
+* [Wavelet hashing](https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5)
 
 ## Installation
 ```
