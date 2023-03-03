@@ -7,6 +7,8 @@ package goimagehash
 import (
 	"errors"
 	"image"
+	"math"
+	"math/bits"
 	"sync"
 
 	"github.com/corona10/goimagehash/etcs"
@@ -89,6 +91,34 @@ func PerceptionHash(img image.Image) (*ImageHash, error) {
 	}
 
 	return phash, nil
+}
+
+func WaveletHash(img image.Image) (*ImageHash, error) {
+	if img == nil {
+		return nil, errors.New("image object can not be nil")
+	}
+	bounds := img.Bounds()
+	if transforms.Min(bounds.Max.X, bounds.Max.Y) < 8 {
+		return nil, errors.New("image width and height should be more than 8")
+	}
+	whash := NewImageHash(0, WHash)
+
+	imgScale := transforms.Floorp2(transforms.Min(bounds.Max.X, bounds.Max.Y))
+	resized := resize.Resize(imgScale, imgScale, img, resize.Bilinear)
+	pixels := transforms.Rgb2Gray(resized)
+	maxlevel := bits.Len(imgScale) - 1
+	transforms.DWT2D(pixels, maxlevel)
+	pixels[0][0] = 0.0
+	transforms.IDWT2D(pixels, maxlevel)
+	transforms.DWT2D(pixels, maxlevel-3)
+	flattens := transforms.FlattenPixels(pixels, 8, 8)
+	median := etcs.MedianOfPixelsFast64(flattens[:])
+	for idx, p := range flattens {
+		if p > median {
+			whash.leftShiftSet(64 - idx - 1)
+		}
+	}
+	return whash, nil
 }
 
 var pixelPool64 = sync.Pool{
@@ -194,4 +224,44 @@ func ExtDifferenceHash(img image.Image, width, height int) (*ExtImageHash, error
 		}
 	}
 	return NewExtImageHash(dhash, DHash, imgSize), nil
+}
+
+// ExtWaveletHash function returns whash of which the size can be set larger than uint64
+// Support 64bits whash (width=8, height=8) and 256bits whash (width=16, height=16)
+// Important: width * height should be the power of 2
+func ExtWaveletHash(img image.Image, width, height int) (*ExtImageHash, error) {
+	if img == nil {
+		return nil, errors.New("image object can not be nil")
+	}
+	imgSize := width * height
+	if imgSize <= 0 || imgSize&(imgSize-1) != 0 {
+		return nil, errors.New("width * height should be power of 2")
+	}
+	var whash []uint64
+	bounds := img.Bounds()
+	imgScale := transforms.Floorp2(transforms.Min(bounds.Max.X, bounds.Max.Y))
+	resized := resize.Resize(imgScale, imgScale, img, resize.Bilinear)
+	pixels := transforms.Rgb2Gray(resized)
+	maxlevel := bits.Len(imgScale) - 1
+	hashlevel := bits.Len(uint(math.Sqrt(float64(imgSize)))) - 1
+	transforms.DWT2D(pixels, maxlevel)
+	pixels[0][0] = 0.0
+	transforms.IDWT2D(pixels, maxlevel)
+	transforms.DWT2D(pixels, maxlevel-hashlevel)
+	flattens := transforms.FlattenPixels(pixels, width, height)
+	median := etcs.MedianOfPixelsFast64(flattens[:])
+	lenOfUnit := 64
+	if imgSize%lenOfUnit == 0 {
+		whash = make([]uint64, imgSize/lenOfUnit)
+	} else {
+		whash = make([]uint64, imgSize/lenOfUnit+1)
+	}
+	for idx, p := range flattens {
+		indexOfArray := idx / lenOfUnit
+		indexOfBit := lenOfUnit - idx%lenOfUnit - 1
+		if p > median {
+			whash[indexOfArray] |= 1 << uint(indexOfBit)
+		}
+	}
+	return NewExtImageHash(whash, WHash, imgSize), nil
 }
