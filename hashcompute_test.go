@@ -348,7 +348,7 @@ func BenchmarkAverageHash(b *testing.B) {
 	}
 }
 
-func BenchmarkDiffrenceHash(b *testing.B) {
+func BenchmarkDifferenceHash(b *testing.B) {
 	file1, err := os.Open("_examples/sample3.jpg")
 	if err != nil {
 		b.Errorf("%s", err)
