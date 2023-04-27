@@ -138,14 +138,14 @@ func TestSerialization(t *testing.T) {
 		t.Errorf("Expected reHash to be nil, got %v", imageHash)
 	}
 	if err == nil {
-		t.Errorf("Expected err to not be nil")
+		t.Errorf("Should got error for empty string")
 	}
 	extImageHash, err := ExtImageHashFromString("")
 	if extImageHash != nil {
 		t.Errorf("Expected reHash to be nil, got %v", extImageHash)
 	}
 	if err == nil {
-		t.Errorf("Expected err to not be nil")
+		t.Errorf("Should got error for empty string")
 	}
 
 	// test for hashing invalid (non-hexadecimal) string
@@ -255,5 +255,17 @@ func TestDumpAndLoad(t *testing.T) {
 				}
 			}
 		}
+	}
+
+	// test for loading empty bytes buffer
+	var b bytes.Buffer
+	bar := bufio.NewReader(&b)
+	_, err := LoadImageHash(bar)
+	if err == nil {
+		t.Errorf("Should got error for empty bytes buffer")
+	}
+	_, err = LoadExtImageHash(bar)
+	if err == nil {
+		t.Errorf("Should got error for empty bytes buffer")
 	}
 }
