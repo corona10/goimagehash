@@ -147,6 +147,9 @@ func TestSerialization(t *testing.T) {
 	if err == nil {
 		t.Errorf("Expected err to not be nil")
 	}
+
+	// test for hashing invalid (non-hexadecimal) string
+	extImageHash, err = ExtImageHashFromString("k:g")
 }
 
 func TestDifferentBitSizeHash(t *testing.T) {
