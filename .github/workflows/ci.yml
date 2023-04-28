@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v3
       with:
         go-version: ${{ matrix.go-version }}
     - name: Set GOPATH
@@ -20,7 +20,7 @@ jobs:
         ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v1
       with:
         path: src/github.com/corona10/goimagehash
 
