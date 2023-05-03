@@ -66,6 +66,9 @@ func TestSerialization(t *testing.T) {
 	methods := []func(img image.Image) (*ImageHash, error){
 		AverageHash, PerceptionHash, DifferenceHash,
 	}
+	extMethods := []func(img image.Image, width int, height int) (*ExtImageHash, error){
+		ExtAverageHash, ExtPerceptionHash, ExtDifferenceHash,
+	}
 	examples := []string{
 		"_examples/sample1.jpg", "_examples/sample2.jpg", "_examples/sample3.jpg", "_examples/sample4.jpg",
 	}
@@ -103,28 +106,50 @@ func TestSerialization(t *testing.T) {
 		}
 
 		// test for ExtIExtImageHash
-		sizeList := []int{8, 16}
-		for _, size := range sizeList {
-			hash, err := ExtPerceptionHash(img, size, size)
-			checkErr(err)
+		for _, extMethod := range extMethods {
+			extMethodStr := runtime.FuncForPC(reflect.ValueOf(extMethod).Pointer()).Name()
+			sizeList := []int{8, 16}
+			for _, size := range sizeList {
+				hash, err := extMethod(img, size, size)
+				checkErr(err)
 
-			hex := hash.ToString()
-			// len(kind) == 1, len(":") == 1
-			if len(hex) != size*size/4+2 {
-				t.Errorf("Got invalid hex string '%v'; %v of '%v'", hex, "ExtPerceptionHash", ex)
-			}
+				hex := hash.ToString()
+				// len(kind) == 1, len(":") == 1
+				if len(hex) != size*size/4+2 {
+					t.Errorf("Got invalid hex string '%v'; %v of '%v'", hex, extMethodStr, ex)
+				}
 
-			reHash, err := ExtImageHashFromString(hex)
-			checkErr(err)
+				reHash, err := ExtImageHashFromString(hex)
+				checkErr(err)
 
-			distance, err := hash.Distance(reHash)
-			checkErr(err)
+				distance, err := hash.Distance(reHash)
+				checkErr(err)
 
-			if distance != 0 {
-				t.Errorf("Original and unserialized objects should be identical, got distance=%v; %v of '%v'", distance, "ExtPerceptionHash", ex)
+				if distance != 0 {
+					t.Errorf("Original and unserialized objects should be identical, got distance=%v; %v of '%v'", distance, "ExtPerceptionHash", ex)
+				}
 			}
 		}
 	}
+
+	// test for hashing empty string
+	imageHash, err := ImageHashFromString("")
+	if imageHash != nil {
+		t.Errorf("Expected reHash to be nil, got %v", imageHash)
+	}
+	if err == nil {
+		t.Errorf("Should got error for empty string")
+	}
+	extImageHash, err := ExtImageHashFromString("")
+	if extImageHash != nil {
+		t.Errorf("Expected reHash to be nil, got %v", extImageHash)
+	}
+	if err == nil {
+		t.Errorf("Should got error for empty string")
+	}
+
+	// test for hashing invalid (non-hexadecimal) string
+	extImageHash, err = ExtImageHashFromString("k:g")
 }
 
 func TestDifferentBitSizeHash(t *testing.T) {
@@ -230,5 +255,17 @@ func TestDumpAndLoad(t *testing.T) {
 				}
 			}
 		}
+	}
+
+	// test for loading empty bytes buffer
+	var b bytes.Buffer
+	bar := bufio.NewReader(&b)
+	_, err := LoadImageHash(bar)
+	if err == nil {
+		t.Errorf("Should got error for empty bytes buffer")
+	}
+	_, err = LoadExtImageHash(bar)
+	if err == nil {
+		t.Errorf("Should got error for empty bytes buffer")
 	}
 }

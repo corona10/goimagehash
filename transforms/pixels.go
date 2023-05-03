@@ -58,7 +58,7 @@ func rgb2GrayDefault(colorImg image.Image, pixels []float64, s int) {
 	}
 }
 
-// rgb2GrayYCbCR uses *image.YCbCr which is signifiantly faster than the image.Image interface.
+// rgb2GrayYCbCR uses *image.YCbCr which is significantly faster than the image.Image interface.
 func rgb2GrayYCbCR(colorImg *image.YCbCr, pixels []float64, s int) {
 	for i := 0; i < s; i++ {
 		for j := 0; j < s; j++ {
@@ -67,7 +67,7 @@ func rgb2GrayYCbCR(colorImg *image.YCbCr, pixels []float64, s int) {
 	}
 }
 
-// rgb2GrayYCbCR uses *image.RGBA which is signifiantly faster than the image.Image interface.
+// rgb2GrayRGBA uses *image.RGBA which is significantly faster than the image.Image interface.
 func rgb2GrayRGBA(colorImg *image.RGBA, pixels []float64, s int) {
 	for i := 0; i < s; i++ {
 		for j := 0; j < s; j++ {

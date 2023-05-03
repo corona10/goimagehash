@@ -14,7 +14,7 @@ import (
 	"github.com/nfnt/resize"
 )
 
-// AverageHash fuction returns a hash computation of average hash.
+// AverageHash function returns a hash computation of average hash.
 // Implementation follows
 // http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
 func AverageHash(img image.Image) (*ImageHash, error) {

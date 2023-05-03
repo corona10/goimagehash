@@ -124,6 +124,34 @@ func TestNilHashCompute(t *testing.T) {
 	}
 }
 
+func TestExtendHashCompute(t *testing.T) {
+	file, err := os.Open("_examples/sample1.jpg")
+	if err != nil {
+		t.Errorf("%s", err)
+	}
+	defer file.Close()
+	img, err := jpeg.Decode(file)
+	if err != nil {
+		t.Errorf("%s", err)
+	}
+
+	hash, err := ExtPerceptionHash(img, 0, 8)
+	if err == nil {
+		t.Errorf("Error should be got.")
+	}
+	if hash != nil {
+		t.Errorf("Nil hash should be got. but got %v", hash)
+	}
+
+	hash, err = ExtPerceptionHash(img, 16, 2)
+	if err != nil {
+		t.Errorf("%s", err)
+	}
+	if hash == nil {
+		t.Errorf("Hash should be got.")
+	}
+}
+
 func TestNilExtendHashCompute(t *testing.T) {
 	hash, err := ExtAverageHash(nil, 8, 8)
 	if err == nil {
@@ -348,7 +376,7 @@ func BenchmarkAverageHash(b *testing.B) {
 	}
 }
 
-func BenchmarkDiffrenceHash(b *testing.B) {
+func BenchmarkDifferenceHash(b *testing.B) {
 	file1, err := os.Open("_examples/sample3.jpg")
 	if err != nil {
 		b.Errorf("%s", err)
