@@ -13,6 +13,8 @@ import (
 	"io"
 )
 
+var errNoOther = errors.New("other should not be nil")
+
 // Kind describes the kinds of hash.
 type Kind int
 
@@ -54,6 +56,9 @@ func (h *ImageHash) Bits() int {
 
 // Distance method returns a distance between two hashes.
 func (h *ImageHash) Distance(other *ImageHash) (int, error) {
+	if other == nil {
+		return -1, errNoOther
+	}
 	if h.GetKind() != other.GetKind() {
 		return -1, errors.New("Image hashes's kind should be identical")
 	}

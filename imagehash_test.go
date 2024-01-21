@@ -56,6 +56,17 @@ func TestNewImageHash(t *testing.T) {
 	}
 }
 
+func TestNil(t *testing.T) {
+	hash := NewImageHash(0, AHash)
+	dis, err := hash.Distance(nil)
+	if err != errNoOther {
+		t.Errorf("Expected err %s, actual %s", errNoOther, err)
+	}
+	if dis != -1 {
+		t.Errorf("Distance is expected as %d but got %d", -1, dis)
+	}
+}
+
 func TestSerialization(t *testing.T) {
 	checkErr := func(err error) {
 		if err != nil {
