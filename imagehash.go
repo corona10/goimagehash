@@ -54,6 +54,9 @@ func (h *ImageHash) Bits() int {
 
 // Distance method returns a distance between two hashes.
 func (h *ImageHash) Distance(other *ImageHash) (int, error) {
+	if other == nil {
+		return -1, errors.New("other should not be nil")
+	}
 	if h.GetKind() != other.GetKind() {
 		return -1, errors.New("Image hashes's kind should be identical")
 	}
