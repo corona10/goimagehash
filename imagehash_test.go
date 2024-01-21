@@ -59,7 +59,7 @@ func TestNewImageHash(t *testing.T) {
 func TestNil(t *testing.T) {
 	hash := NewImageHash(0, AHash)
 	dis, err := hash.Distance(nil)
-	if !errors.Is(err, errNoOther) {
+	if err != errNoOther {
 		t.Errorf("Expected err %s, actual %s", errNoOther, err)
 	}
 	if dis != -1 {
